@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.itptit.roomrenting.presentation.auth.login.LoginScreen
+import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingViewModel
 
@@ -28,19 +30,25 @@ fun NavGraph(
 
         navigation(
             route = Route.RoomRentingNavigation.route,
-            startDestination = Route.HomeScreen.route
+            startDestination = Route.LoginScreen.route
         ) {
+            composable(route = Route.LoginScreen.route) {
+                val viewModel: LoginViewModel = hiltViewModel()
+                LoginScreen(onLoginSuccess = {
+                    navController.navigate(Route.HomeScreen.route)
+                })
+            }
             composable(route = Route.HomeScreen.route) {
-
+                // HomeScreen() // Implement HomeScreen here
             }
             composable(route = Route.SearchScreen.route) {
-
+                // SearchScreen() // Implement SearchScreen here
             }
             composable(route = Route.BookmarkScreen.route) {
-
+                // BookmarkScreen() // Implement BookmarkScreen here
             }
             composable(route = Route.DetailsScreen.route) {
-
+                // DetailsScreen() // Implement DetailsScreen here
             }
         }
     }

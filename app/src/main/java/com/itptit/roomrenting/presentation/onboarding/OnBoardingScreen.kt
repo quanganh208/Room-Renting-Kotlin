@@ -30,7 +30,6 @@ import com.itptit.roomrenting.presentation.onboarding.components.OnBoardingPage
 import com.itptit.roomrenting.presentation.onboarding.components.PagerIndicator
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnBoardingScreen(
     onEvent: (OnBoardingEvent) -> Unit
@@ -77,7 +76,6 @@ fun OnBoardingScreen(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 val scope = rememberCoroutineScope()
-                //Hide the button when the first element of the list is empty
                 if (buttonsState.value[0].isNotEmpty()) {
                     TextButtonComponent(
                         text = buttonsState.value[0],
