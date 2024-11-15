@@ -54,47 +54,6 @@ fun LoginScreen(
             )
             .padding(16.dp)
     ) {
-//        Column(
-//            modifier = Modifier.align(Alignment.Center),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            TextField(
-//                value = username,
-//                onValueChange = { username = it },
-//                label = { Text("Username") },
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            TextField(
-//                value = password,
-//                onValueChange = { password = it },
-//                label = { Text("Password") },
-//                visualTransformation = PasswordVisualTransformation(),
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            Button(
-//                onClick = {
-//                    viewModel.login(username, password)
-//                },
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text("Login")
-//            }
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            if (isLoading) {
-//                CircularProgressIndicator()
-//            }
-//
-
-//        }
 
         Column(
             modifier = Modifier

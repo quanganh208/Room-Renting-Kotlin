@@ -24,13 +24,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.itptit.roomrenting.R
-import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
 fun RegisterScreen(
-    navController: NavController,
     onRegisterSuccess: () -> Unit,
     viewModel: RegisterViewModel
 ) {

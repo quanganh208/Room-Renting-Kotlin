@@ -2,8 +2,8 @@ package com.itptit.roomrenting.presentation.auth.register
 
 import androidx.lifecycle.ViewModel
 import com.itptit.roomrenting.data.remote.ApiClient
-import com.itptit.roomrenting.data.remote.dto.LoginRequest
-import com.itptit.roomrenting.data.remote.dto.LoginResponse
+import com.itptit.roomrenting.data.remote.dto.RegisterRequest
+import com.itptit.roomrenting.data.remote.dto.RegisterResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.Call
@@ -19,10 +19,10 @@ class RegisterViewModel : ViewModel() {
 
     fun register(username: String, password: String) {
         _isLoading.value = true
-        val request = LoginRequest(username, password)
+        val request = RegisterRequest(username, password)
         try {
-            ApiClient.authService.register(request).enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+            ApiClient.authService.register(request).enqueue(object : Callback<RegisterResponse> {
+                override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                     _isLoading.value = false
                     _registerResult.value = if (response.isSuccessful) {
                         "Registration successful: ${response.body()}"
@@ -31,7 +31,7 @@ class RegisterViewModel : ViewModel() {
                     }
                 }
 
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
                     _isLoading.value = false
                     _registerResult.value = "Error: ${t.message}"
                 }
