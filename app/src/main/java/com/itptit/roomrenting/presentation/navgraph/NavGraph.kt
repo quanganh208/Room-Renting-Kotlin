@@ -8,6 +8,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.itptit.roomrenting.presentation.auth.login.LoginScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
+import com.itptit.roomrenting.presentation.auth.register.RegisterScreen
+import com.itptit.roomrenting.presentation.auth.register.RegisterViewModel
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingViewModel
 
@@ -33,16 +35,34 @@ fun NavGraph(
             startDestination = Route.LoginScreen.route
         ) {
             composable(route = Route.LoginScreen.route) {
-                val viewModel: LoginViewModel = hiltViewModel()
-                LoginScreen(onLoginSuccess = {
-                    navController.navigate(Route.HomeScreen.route)
-                })
+                val viewModel: LoginViewModel = hiltViewModel() // Using Hilt for dependency injection
+                LoginScreen(
+                    navController = navController,
+                    onLoginSuccess = {
+                        navController.navigate(Route.HomeScreen.route) {
+                            popUpTo(Route.LoginScreen.route) { inclusive = true }
+                        }
+                    },
+                    viewModel = viewModel
+                )
             }
+
+            composable(route = Route.RegisterScreen.route) {
+                val viewModel: RegisterViewModel = hiltViewModel() // Using Hilt for dependency injection
+                RegisterScreen(
+                    navController = navController,
+                    onRegisterSuccess = {
+                        navController.navigate(Route.HomeScreen.route) {
+                            popUpTo(Route.LoginScreen.route) { inclusive = true }
+                        }
+                    },
+                    viewModel = viewModel
+                )
+
+            }
+
             composable(route = Route.HomeScreen.route) {
                 // HomeScreen() // Implement HomeScreen here
-            }
-            composable(route = Route.SearchScreen.route) {
-                // SearchScreen() // Implement SearchScreen here
             }
             composable(route = Route.BookmarkScreen.route) {
                 // BookmarkScreen() // Implement BookmarkScreen here

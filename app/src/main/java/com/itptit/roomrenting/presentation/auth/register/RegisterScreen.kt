@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.presentation.auth.login
+package com.itptit.roomrenting.presentation.auth.register
 
 import FullScreenLoadingModal
 import androidx.compose.foundation.Image
@@ -29,15 +29,15 @@ import com.itptit.roomrenting.R
 import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
-fun LoginScreen(
+fun RegisterScreen(
     navController: NavController,
-    onLoginSuccess: () -> Unit,
-    viewModel: LoginViewModel
+    onRegisterSuccess: () -> Unit,
+    viewModel: RegisterViewModel
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val isLoading by viewModel.isLoading.collectAsState()
-    val loginResult by viewModel.loginResult.collectAsState()
+    val registerResult by viewModel.registerResult.collectAsState()
     val focusManager = LocalFocusManager.current
     val isButtonEnabled = username.isNotEmpty() && password.isNotEmpty()
 
@@ -54,48 +54,6 @@ fun LoginScreen(
             )
             .padding(16.dp)
     ) {
-//        Column(
-//            modifier = Modifier.align(Alignment.Center),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            TextField(
-//                value = username,
-//                onValueChange = { username = it },
-//                label = { Text("Username") },
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            TextField(
-//                value = password,
-//                onValueChange = { password = it },
-//                label = { Text("Password") },
-//                visualTransformation = PasswordVisualTransformation(),
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            Button(
-//                onClick = {
-//                    viewModel.login(username, password)
-//                },
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Text("Login")
-//            }
-//
-//            Spacer(modifier = Modifier.height(16.dp))
-//
-//            if (isLoading) {
-//                CircularProgressIndicator()
-//            }
-//
-
-//        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -141,39 +99,22 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (loginResult.isNotEmpty()) {
+            if (registerResult.isNotEmpty()) {
                 Text(
-                    text = loginResult,
-                    color = if (loginResult.startsWith("Login successful")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                    text = registerResult,
+                    color = if (registerResult.startsWith("Registration successful")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
 
-                if (loginResult.startsWith("Login successful")) {
-                    onLoginSuccess()
+                if (registerResult.startsWith("Registration successful")) {
+                    onRegisterSuccess()
                 }
             }
 
-            // Register account text (clickable)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = "Đăng ký tài khoản",
-                    color = Color(0xFF0B9E43), // Màu xanh lá cây
-                    fontSize = 14.sp,
-                    modifier = Modifier.clickable {
-                        navController.navigate(route = Route.RegisterScreen.route)
-                    }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Login Button
+            // Register Button
             Button(
                 onClick = {
                     if (isButtonEnabled) {
-                        viewModel.login(username, password)
+                        viewModel.register(username, password)
                     }
                 },
                 modifier = Modifier
@@ -186,7 +127,7 @@ fun LoginScreen(
                 shape = RoundedCornerShape(6.dp),
             ) {
                 Text(
-                    text = "Đăng nhập",
+                    text = "Đăng ký",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -231,7 +172,6 @@ fun LoginScreen(
             )
         }
     }
-
 }
 
 @Composable

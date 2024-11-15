@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.presentation.auth.login
+package com.itptit.roomrenting.presentation.auth.register
 
 import androidx.lifecycle.ViewModel
 import com.itptit.roomrenting.data.remote.ApiClient
@@ -10,35 +10,35 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginViewModel : ViewModel() {
-    private val _loginResult = MutableStateFlow("")
-    val loginResult: StateFlow<String> = _loginResult
+class RegisterViewModel : ViewModel() {
+    private val _registerResult = MutableStateFlow("")
+    val registerResult: StateFlow<String> = _registerResult
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun login(username: String, password: String) {
+    fun register(username: String, password: String) {
         _isLoading.value = true
         val request = LoginRequest(username, password)
         try {
-            ApiClient.authService.login(request).enqueue(object : Callback<LoginResponse> {
+            ApiClient.authService.register(request).enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     _isLoading.value = false
-                    _loginResult.value = if (response.isSuccessful) {
-                        "Login successful: ${response.body()}"
+                    _registerResult.value = if (response.isSuccessful) {
+                        "Registration successful: ${response.body()}"
                     } else {
-                        "Login failed: ${response.errorBody()?.string()}"
+                        "Registration failed: ${response.errorBody()?.string()}"
                     }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                     _isLoading.value = false
-                    _loginResult.value = "Error: ${t.message}"
+                    _registerResult.value = "Error: ${t.message}"
                 }
             })
         } catch (e: Exception) {
             _isLoading.value = false
-            _loginResult.value = "Error: ${e.localizedMessage}"
+            _registerResult.value = "Error: ${e.localizedMessage}"
         }
     }
 }
