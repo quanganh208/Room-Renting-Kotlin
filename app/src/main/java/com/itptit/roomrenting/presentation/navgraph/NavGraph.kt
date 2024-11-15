@@ -35,7 +35,8 @@ fun NavGraph(
             startDestination = Route.LoginScreen.route
         ) {
             composable(route = Route.LoginScreen.route) {
-                val viewModel: LoginViewModel = hiltViewModel() // Using Hilt for dependency injection
+                val viewModel: LoginViewModel =
+                    hiltViewModel() // Using Hilt for dependency injection
                 LoginScreen(
                     navController = navController,
                     onLoginSuccess = {
@@ -48,9 +49,9 @@ fun NavGraph(
             }
 
             composable(route = Route.RegisterScreen.route) {
-                val viewModel: RegisterViewModel = hiltViewModel() // Using Hilt for dependency injection
+                val viewModel: RegisterViewModel =
+                    hiltViewModel() // Using Hilt for dependency injection
                 RegisterScreen(
-                    navController = navController,
                     onRegisterSuccess = {
                         navController.navigate(Route.HomeScreen.route) {
                             popUpTo(Route.LoginScreen.route) { inclusive = true }
