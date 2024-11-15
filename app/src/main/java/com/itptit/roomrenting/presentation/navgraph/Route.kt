@@ -10,9 +10,9 @@ sealed class Route(
 
     object LoginScreen : Route(route = "loginScreen")
 
-    object HomeScreen : Route(route = "homeScreen")
+    object RegisterScreen : Route(route = "registerScreen")
 
-    object SearchScreen : Route(route = "searchScreen")
+    object HomeScreen : Route(route = "homeScreen")
 
     object BookmarkScreen : Route(route = "bookMarkScreen")
 

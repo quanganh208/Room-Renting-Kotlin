@@ -1,4 +1,3 @@
 package com.itptit.roomrenting.data.remote.dto
 
-class RegisterRequest {
-}
+data class RegisterRequest(val username: String, val password: String)
