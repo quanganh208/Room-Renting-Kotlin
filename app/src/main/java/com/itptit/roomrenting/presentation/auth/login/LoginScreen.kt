@@ -36,10 +36,11 @@ fun LoginScreen(
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") } // Biến lưu thông báo lỗi mật khẩu
     val isLoading by viewModel.isLoading.collectAsState()
     val loginResult by viewModel.loginResult.collectAsState()
     val focusManager = LocalFocusManager.current
-    val isButtonEnabled = username.isNotEmpty() && password.isNotEmpty()
+    val isButtonEnabled = username.isNotEmpty() && password.length >= 6 // Chỉ bật nút nếu mật khẩu hợp lệ
 
     FullScreenLoadingModal(isVisible = isLoading)
     Box(
@@ -88,15 +89,30 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Password field
-            TextFieldWithLabel(
-                label = "Mật khẩu",
-                placeholder = "Nhập mật khẩu",
-                keyboardType = KeyboardType.Password,
-                text = password,
-                onTextChange = { password = it },
-                labelFontSize = 16f,
-                isPassword = true
-            )
+            Column(modifier = Modifier.fillMaxWidth()) {
+                TextFieldWithLabel(
+                    label = "Mật khẩu",
+                    placeholder = "Nhập mật khẩu",
+                    keyboardType = KeyboardType.Password,
+                    text = password,
+                    onTextChange = {
+                        password = it
+                        passwordError = if (it.length < 6) "Mật khẩu tối thiểu 6 ký tự" else ""
+                    },
+                    labelFontSize = 16f,
+                    isPassword = true
+                )
+
+                // Hiển thị lỗi nếu mật khẩu không đủ 6 ký tự
+                if (passwordError.isNotEmpty()) {
+                    Text(
+                        text = passwordError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -192,6 +208,7 @@ fun LoginScreen(
     }
 
 }
+
 
 @Composable
 fun TextFieldWithLabel(
