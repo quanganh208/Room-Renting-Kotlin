@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,25 +24,29 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.presentation.navgraph.Route
 
 
 @Composable
 fun RegisterScreen(
+    navController : NavController,
     onRegisterSuccess: () -> Unit,
     viewModel: RegisterViewModel
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var passwordTouched by remember { mutableStateOf(false) }
-    var confirmPasswordTouched by remember { mutableStateOf(false) }
+    val passwordTouched by remember { mutableStateOf(false) }
+    val confirmPasswordTouched by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     var successMessage by remember { mutableStateOf("") }
     var isCountingDown by remember { mutableStateOf(false) }
-    var countdownTime by remember { mutableStateOf(3) }
+    var countdownTime by remember { mutableIntStateOf(3) }
 
     val isLoading by viewModel.isLoading.collectAsState()
+    val registerResult by viewModel.registerResult.collectAsState()
     val isButtonEnabled = username.isNotEmpty() && password.length >= 6 && confirmPassword.length >= 6
     val focusManager = LocalFocusManager.current
 
@@ -121,8 +124,7 @@ fun RegisterScreen(
                         text = password,
                         onTextChange = {
                             password = it
-                            passwordTouched = true
-                            errorMessage = if (passwordTouched && it.length < 6) "Mật khẩu tối thiểu 6 ký tự" else ""
+                            errorMessage = if (it.length < 6) "Mật khẩu tối thiểu 6 ký tự" else ""
                         },
                         labelFontSize = 16f,
                         isPassword = true
@@ -148,8 +150,7 @@ fun RegisterScreen(
                         text = confirmPassword,
                         onTextChange = {
                             confirmPassword = it
-                            confirmPasswordTouched = true
-                            errorMessage = if (confirmPasswordTouched && it.length < 6) "Mật khẩu tối thiểu 6 ký tự" else ""
+                            errorMessage = if (it.length < 6) "Mật khẩu tối thiểu 6 ký tự" else ""
                         },
                         labelFontSize = 16f,
                         isPassword = true
@@ -166,16 +167,22 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                if (registerResult.isNotEmpty()) {
+                    Text(
+                        text = registerResult,
+                        color = if (registerResult.startsWith("Đăng nhập thành công")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                    )
+
+                    if (registerResult.startsWith("Đăng nhập thành công")) {
+                        isCountingDown = true
+                    }
+                }
+
                 // Register Button
                 Button(
                     onClick = {
-                        if (password != confirmPassword) {
-                            errorMessage = "Mật khẩu không khớp"
-                            successMessage = ""
-                        } else {
-                            errorMessage = ""
-                            successMessage = "Đăng ký thành công! Chuyển qua đăng nhập"
-                            isCountingDown = true
+                        if (isButtonEnabled) {
+                            viewModel.register(username, password)
                         }
                     },
                     modifier = Modifier

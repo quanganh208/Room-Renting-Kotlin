@@ -22,12 +22,15 @@ class LoginViewModel : ViewModel() {
         val request = LoginRequest(username, password)
         try {
             ApiClient.authService.login(request).enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                override fun onResponse(
+                    call: Call<LoginResponse>,
+                    response: Response<LoginResponse>
+                ) {
                     _isLoading.value = false
                     _loginResult.value = if (response.isSuccessful) {
-                        "Login successful: ${response.body()}"
+                        "Đăng nhập thành công, chuyển hướng tới màn hình chính"
                     } else {
-                        "Login failed: ${response.errorBody()?.string()}"
+                        "Đăng nhập thất bại: ${if (response.code() == 400) "Sai tên đăng nhập hoặc mật khẩu" else "Lỗi không xác định"}"
                     }
                 }
 

@@ -119,10 +119,10 @@ fun LoginScreen(
             if (loginResult.isNotEmpty()) {
                 Text(
                     text = loginResult,
-                    color = if (loginResult.startsWith("Login successful")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                    color = if (loginResult.startsWith("Đăng nhập thành công")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
 
-                if (loginResult.startsWith("Login successful")) {
+                if (loginResult.startsWith("Đăng nhập thành công")) {
                     onLoginSuccess()
                 }
             }

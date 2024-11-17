@@ -52,6 +52,7 @@ fun NavGraph(
                 val viewModel: RegisterViewModel =
                     hiltViewModel() // Using Hilt for dependency injection
                 RegisterScreen(
+                    navController = navController,
                     onRegisterSuccess = {
                         navController.navigate(Route.HomeScreen.route) {
                             popUpTo(Route.LoginScreen.route) { inclusive = true }
