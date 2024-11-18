@@ -142,6 +142,7 @@ fun LoginScreen(
                     fontSize = 14.sp,
                     modifier = Modifier.clickable {
                         navController.navigate(route = Route.RegisterScreen.route)
+
                     }
                 )
             }
@@ -151,9 +152,10 @@ fun LoginScreen(
             // Login Button
             Button(
                 onClick = {
-                    if (isButtonEnabled) {
-                        viewModel.login(username, password)
-                    }
+//                    if (isButtonEnabled) {
+//                        viewModel.login(username, password)
+//                    }
+                    navController.navigate(route = Route.HomeScreen.route)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
