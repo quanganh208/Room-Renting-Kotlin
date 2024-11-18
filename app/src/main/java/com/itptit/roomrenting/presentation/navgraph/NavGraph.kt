@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.itptit.roomrenting.presentation.auth.home.HomeScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
 import com.itptit.roomrenting.presentation.auth.register.RegisterScreen
@@ -64,7 +65,11 @@ fun NavGraph(
             }
 
             composable(route = Route.HomeScreen.route) {
-                // HomeScreen() // Implement HomeScreen here
+                val viewModel: RegisterViewModel =
+                    hiltViewModel() // Using Hilt for dependency injection
+                HomeScreen(
+                    navController = navController,
+                )
             }
             composable(route = Route.BookmarkScreen.route) {
                 // BookmarkScreen() // Implement BookmarkScreen here

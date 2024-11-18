@@ -33,9 +33,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 
 @Composable
-fun RegisterScreen(
+fun HomeScreen(
     navController: NavController,
-    onRegisterSuccess: () -> Unit,
 ) {
     var username by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
@@ -279,7 +278,6 @@ fun RegisterScreen(
                         countdownTime--
                         successMessage = "Đăng ký thành công! Chuyển qua đăng nhập sau $countdownTime giây."
                     }
-                    onRegisterSuccess()
                     navController.navigate(Route.LoginScreen.route)
                 }
             }

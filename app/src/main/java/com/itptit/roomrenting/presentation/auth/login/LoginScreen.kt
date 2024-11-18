@@ -152,10 +152,9 @@ fun LoginScreen(
             // Login Button
             Button(
                 onClick = {
-//                    if (isButtonEnabled) {
-//                        viewModel.login(username, password)
-//                    }
-                    navController.navigate(route = Route.HomeScreen.route)
+                    if (isButtonEnabled) {
+                        viewModel.login(username, password)
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
