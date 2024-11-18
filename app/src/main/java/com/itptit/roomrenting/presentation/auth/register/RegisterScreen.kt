@@ -26,8 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.itptit.roomrenting.R
-import com.itptit.roomrenting.presentation.navgraph.Route
-
+import kotlinx.coroutines.delay
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -48,15 +47,16 @@ fun RegisterScreen(
     var confirmPasswordTouched by remember { mutableStateOf(false) }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-    var successMessage by remember { mutableStateOf("") }
-    var isCountingDown by remember { mutableStateOf(false) }
-    var countdownTime by remember { mutableIntStateOf(3) }
 
     val isLoading by viewModel.isLoading.collectAsState()
     val registerResult by viewModel.registerResult.collectAsState()
-    val isButtonEnabled = username.isNotEmpty() && fullName.isNotEmpty() && phoneNumber.isNotEmpty() &&
-            email.isNotEmpty() && password.length >= 6 && confirmPassword.length >= 6 && password == confirmPassword
+    val emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$".toRegex(RegexOption.IGNORE_CASE)
+    val phoneNumberRegex = "^(\\+84|0084|0)[235789][0-9]{8}\$".toRegex(RegexOption.IGNORE_CASE)
+    val isButtonEnabled =
+        username.isNotEmpty() && fullName.isNotEmpty() && phoneNumber.isNotEmpty() &&
+                email.isNotEmpty() && emailRegex.matches(email) && phoneNumberRegex.matches(
+            phoneNumber
+        ) && password.length >= 6 && confirmPassword.length >= 6 && password == confirmPassword
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState() // Thêm state cho scroll
 
@@ -85,7 +85,10 @@ fun RegisterScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 48.dp, bottom = 16.dp), // Tăng `top` padding để nút Back hạ xuống thấp hơn
+                    .padding(
+                        top = 48.dp,
+                        bottom = 16.dp
+                    ), // Tăng `top` padding để nút Back hạ xuống thấp hơn
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
@@ -154,6 +157,14 @@ fun RegisterScreen(
                     onTextChange = { phoneNumber = it },
                     labelFontSize = 16f
                 )
+                if (phoneNumber.isNotEmpty() && !phoneNumberRegex.matches(phoneNumber)) {
+                    Text(
+                        text = "Số điện thoại không hợp lệ",
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -168,6 +179,14 @@ fun RegisterScreen(
                     onTextChange = { email = it },
                     labelFontSize = 16f
                 )
+                if (email.isNotEmpty() && !emailRegex.matches(email)) {
+                    Text(
+                        text = "Email không hợp lệ",
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -214,7 +233,9 @@ fun RegisterScreen(
                     labelFontSize = 16f,
                     isPassword = true,
                     isPasswordVisible = confirmPasswordVisible,
-                    onPasswordVisibilityChange = { confirmPasswordVisible = !confirmPasswordVisible }
+                    onPasswordVisibilityChange = {
+                        confirmPasswordVisible = !confirmPasswordVisible
+                    }
                 )
                 if (confirmPasswordTouched && confirmPassword != password) {
                     Text(
@@ -232,7 +253,7 @@ fun RegisterScreen(
             Button(
                 onClick = {
                     if (isButtonEnabled) {
-                        viewModel.register(username, password)
+                        viewModel.register(username, password, fullName, email, phoneNumber)
                     }
                 },
                 modifier = Modifier
@@ -253,40 +274,19 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Error or success message
-            if (errorMessage.isNotEmpty()) {
+            if (registerResult.isNotEmpty()) {
                 Text(
-                    text = errorMessage,
-                    color = Color.Red,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
+                    text = registerResult,
+                    color = if (registerResult.startsWith("Đăng ký thành công")) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
-            } else if (successMessage.isNotEmpty()) {
-                Text(
-                    text = successMessage,
-                    color = Color.Green,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                )
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Countdown logic
-            if (isCountingDown) {
-                LaunchedEffect(Unit) {
-                    while (countdownTime > 0) {
-                        kotlinx.coroutines.delay(1000L)
-                        countdownTime--
-                        successMessage = "Đăng ký thành công! Chuyển qua đăng nhập sau $countdownTime giây."
+                if (registerResult.startsWith("Đăng ký thành công")) {
+                    LaunchedEffect(Unit) {
+                        delay(2000)
+                        onRegisterSuccess()
                     }
-                    onRegisterSuccess()
-                    navController.navigate(Route.LoginScreen.route)
                 }
             }
-
             Spacer(modifier = Modifier.height(32.dp))
 
             // Footer
@@ -327,7 +327,6 @@ fun RegisterScreen(
         }
     }
 }
-
 
 @Composable
 fun TextFieldWithLabel(

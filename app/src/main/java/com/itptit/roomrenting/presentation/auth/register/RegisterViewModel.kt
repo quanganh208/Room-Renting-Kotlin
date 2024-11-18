@@ -17,17 +17,17 @@ class RegisterViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun register(username: String, password: String) {
+    fun register(username: String, password: String, fullName: String, email: String, phone: String) {
         _isLoading.value = true
-        val request = RegisterRequest(username, password)
+        val request = RegisterRequest(username, password, fullName, email, phone)
         try {
             ApiClient.authService.register(request).enqueue(object : Callback<RegisterResponse> {
                 override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                     _isLoading.value = false
-                    _registerResult.value = if (response.isSuccessful) {
-                        "Registration successful: ${response.body()}"
+                    _registerResult.value = if (response.body()?.success == true) {
+                        "Đăng ký thành công"
                     } else {
-                        "Registration failed: ${response.errorBody()?.string()}"
+                        "Đăng ký thất bại: ${if (response.code() == 400) "Tên đăng nhập hoặc email đã có người sử dụng" else "Lỗi không xác định"}"
                     }
                 }
 

@@ -1,6 +1,6 @@
 package com.itptit.roomrenting.data.remote.dto
 
-import com.itptit.roomrenting.domain.model.Data
+import com.itptit.roomrenting.domain.model.auth.login.Data
 
 data class LoginResponse(
     val data: Data,

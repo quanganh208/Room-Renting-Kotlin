@@ -28,7 +28,7 @@ class LoginViewModel : ViewModel() {
                 ) {
                     _isLoading.value = false
                     _loginResult.value = if (response.isSuccessful) {
-                        "Đăng nhập thành công, chuyển hướng tới màn hình chính"
+                        "Đăng nhập thành công"
                     } else {
                         "Đăng nhập thất bại: ${if (response.code() == 400) "Sai tên đăng nhập hoặc mật khẩu" else "Lỗi không xác định"}"
                     }

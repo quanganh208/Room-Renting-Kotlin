@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.itptit.roomrenting.R
 import com.itptit.roomrenting.presentation.navgraph.Route
+import kotlinx.coroutines.delay
 
 @Composable
 fun LoginScreen(
@@ -123,7 +124,10 @@ fun LoginScreen(
                 )
 
                 if (loginResult.startsWith("Đăng nhập thành công")) {
-                    onLoginSuccess()
+                    LaunchedEffect(Unit) {
+                        delay(2000)
+                        onLoginSuccess()
+                    }
                 }
             }
 

@@ -55,7 +55,7 @@ fun NavGraph(
                     navController = navController,
                     onRegisterSuccess = {
                         navController.navigate(Route.HomeScreen.route) {
-                            popUpTo(Route.LoginScreen.route) { inclusive = true }
+                            popUpTo(Route.RegisterScreen.route) { inclusive = true }
                         }
                     },
                     viewModel = viewModel
