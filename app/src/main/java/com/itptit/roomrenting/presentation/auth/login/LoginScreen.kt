@@ -220,6 +220,8 @@ fun TextFieldWithLabel(
     labelFontSize: Float,
     isPassword: Boolean = false
 ) {
+    var passwordVisible by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -240,7 +242,21 @@ fun TextFieldWithLabel(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+            visualTransformation = if (isPassword && !passwordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+            trailingIcon = {
+                if (isPassword) {
+                    Text(
+                        text = if (passwordVisible) "Ẩn" else "Hiện",
+                        color = Color(0xFF3B78AD), // Màu xanh dương để nổi bật
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold, // Làm cho chữ đậm hơn
+                        modifier = Modifier
+                            .clickable { passwordVisible = !passwordVisible }
+                            .padding(horizontal = 8.dp) // Đảm bảo căn chỉnh hợp lý
+//                            .align(Alignment.CenterVertically) // Cân chỉnh cho cân đối hơn trong TextField
+                    )
+                }
+            },
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
                 focusedContainerColor = Color.Transparent,
@@ -250,3 +266,5 @@ fun TextFieldWithLabel(
         )
     }
 }
+
+
