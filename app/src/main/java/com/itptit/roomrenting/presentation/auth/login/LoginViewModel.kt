@@ -1,6 +1,8 @@
 package com.itptit.roomrenting.presentation.auth.login
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import com.itptit.roomrenting.data.remote.ApiClient
 import com.itptit.roomrenting.data.remote.dto.LoginRequest
 import com.itptit.roomrenting.data.remote.dto.LoginResponse
@@ -10,7 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val _loginResult = MutableStateFlow("")
     val loginResult: StateFlow<String> = _loginResult
 
@@ -27,21 +29,32 @@ class LoginViewModel : ViewModel() {
                     response: Response<LoginResponse>
                 ) {
                     _isLoading.value = false
-                    _loginResult.value = if (response.isSuccessful) {
-                        "Đăng nhập thành công"
+                    if (response.isSuccessful) {
+                        _loginResult.value = "Đăng nhập thành công"
+                        saveLoginInfo(response.body()!!)
                     } else {
-                        "Đăng nhập thất bại: ${if (response.code() == 400) "Sai tên đăng nhập hoặc mật khẩu" else "Lỗi không xác định"}"
+                        _loginResult.value =
+                            "Đăng nhập thất bại: ${if (response.code() == 400) "Sai tên đăng nhập hoặc mật khẩu" else "Lỗi không xác định"}"
                     }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                     _isLoading.value = false
-                    _loginResult.value = "Error: ${t.message}"
+                    _loginResult.value = "Đăng nhập thất bại: ${t.message}"
                 }
             })
         } catch (e: Exception) {
             _isLoading.value = false
-            _loginResult.value = "Error: ${e.localizedMessage}"
+            _loginResult.value = "Đăng nhập thất bại: ${e.localizedMessage}"
+        }
+    }
+
+    private fun saveLoginInfo(response: LoginResponse) {
+        val sharedPreferences =
+            getApplication<Application>().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("access_token", response.data.jwt)
+            apply()
         }
     }
 }

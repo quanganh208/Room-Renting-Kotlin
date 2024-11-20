@@ -20,6 +20,8 @@ sealed class Route(
 
     object AppStartNavigation : Route(route = "appStartNavigation")
 
+    object AuthNavigation : Route(route = "authNavigation")
+
     object RoomRentingNavigation : Route(route = "roomRentingNavigation")
 }
 

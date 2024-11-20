@@ -125,7 +125,7 @@ fun LoginScreen(
 
                 if (loginResult.startsWith("Đăng nhập thành công")) {
                     LaunchedEffect(Unit) {
-                        delay(2000)
+                        delay(1000)
                         onLoginSuccess()
                     }
                 }

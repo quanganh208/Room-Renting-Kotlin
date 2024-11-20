@@ -22,8 +22,7 @@ fun NavGraph(
 
     NavHost(navController = navController, startDestination = startDestination) {
         navigation(
-            route = Route.AppStartNavigation.route,
-            startDestination = Route.OnBoardingScreen.route
+            route = Route.AppStartNavigation.route, startDestination = Route.OnBoardingScreen.route
         ) {
             composable(route = Route.OnBoardingScreen.route) {
                 val viewModel: OnBoardingViewModel = hiltViewModel()
@@ -31,21 +30,16 @@ fun NavGraph(
             }
         }
 
-        navigation(
-            route = Route.RoomRentingNavigation.route,
-            startDestination = Route.LoginScreen.route
-        ) {
+        navigation(route = Route.AuthNavigation.route, startDestination = Route.LoginScreen.route) {
             composable(route = Route.LoginScreen.route) {
                 val viewModel: LoginViewModel =
                     hiltViewModel() // Using Hilt for dependency injection
                 LoginScreen(
-                    navController = navController,
-                    onLoginSuccess = {
+                    navController = navController, onLoginSuccess = {
                         navController.navigate(Route.HomeScreen.route) {
                             popUpTo(Route.LoginScreen.route) { inclusive = true }
                         }
-                    },
-                    viewModel = viewModel
+                    }, viewModel = viewModel
                 )
             }
 
@@ -53,17 +47,19 @@ fun NavGraph(
                 val viewModel: RegisterViewModel =
                     hiltViewModel() // Using Hilt for dependency injection
                 RegisterScreen(
-                    navController = navController,
-                    onRegisterSuccess = {
+                    navController = navController, onRegisterSuccess = {
                         navController.navigate(Route.HomeScreen.route) {
                             popUpTo(Route.RegisterScreen.route) { inclusive = true }
                         }
-                    },
-                    viewModel = viewModel
+                    }, viewModel = viewModel
                 )
 
             }
+        }
 
+        navigation(
+            route = Route.RoomRentingNavigation.route, startDestination = Route.HomeScreen.route
+        ) {
             composable(route = Route.HomeScreen.route) {
                 val viewModel: RegisterViewModel =
                     hiltViewModel() // Using Hilt for dependency injection

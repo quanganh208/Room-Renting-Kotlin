@@ -27,7 +27,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen().apply {
-            setKeepOnScreenCondition(condition = { viewModel.splashCondition.value })
+            setKeepOnScreenCondition {
+                viewModel.splashCondition.value
+            }
         }
         setContent {
             RoomRentingAppTheme(dynamicColor = false) {

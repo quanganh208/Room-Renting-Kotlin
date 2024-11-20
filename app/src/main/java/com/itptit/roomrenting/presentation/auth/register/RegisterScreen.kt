@@ -282,7 +282,7 @@ fun RegisterScreen(
 
                 if (registerResult.startsWith("Đăng ký thành công")) {
                     LaunchedEffect(Unit) {
-                        delay(2000)
+                        delay(1000)
                         onRegisterSuccess()
                     }
                 }
