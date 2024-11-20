@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.data.remote.dto
+package com.itptit.roomrenting.data.remote.dto.auth
 
 import com.itptit.roomrenting.domain.model.auth.register.Data
 

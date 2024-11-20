@@ -37,11 +37,11 @@ fun LoginScreen(
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordError by remember { mutableStateOf("") } // Biến lưu thông báo lỗi mật khẩu
+    var passwordError by remember { mutableStateOf("") }
     val isLoading by viewModel.isLoading.collectAsState()
     val loginResult by viewModel.loginResult.collectAsState()
     val focusManager = LocalFocusManager.current
-    val isButtonEnabled = username.isNotEmpty() && password.length >= 6 // Chỉ bật nút nếu mật khẩu hợp lệ
+    val isButtonEnabled = username.isNotEmpty() && password.length >= 6
 
     FullScreenLoadingModal(isVisible = isLoading)
     Box(

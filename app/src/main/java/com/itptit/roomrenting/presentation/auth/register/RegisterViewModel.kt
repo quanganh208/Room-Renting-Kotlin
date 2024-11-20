@@ -2,8 +2,8 @@ package com.itptit.roomrenting.presentation.auth.register
 
 import androidx.lifecycle.ViewModel
 import com.itptit.roomrenting.data.remote.ApiClient
-import com.itptit.roomrenting.data.remote.dto.RegisterRequest
-import com.itptit.roomrenting.data.remote.dto.RegisterResponse
+import com.itptit.roomrenting.data.remote.dto.auth.RegisterRequest
+import com.itptit.roomrenting.data.remote.dto.auth.RegisterResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.Call

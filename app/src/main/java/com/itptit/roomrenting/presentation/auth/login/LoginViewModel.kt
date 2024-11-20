@@ -4,8 +4,9 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import com.itptit.roomrenting.data.remote.ApiClient
-import com.itptit.roomrenting.data.remote.dto.LoginRequest
-import com.itptit.roomrenting.data.remote.dto.LoginResponse
+import com.itptit.roomrenting.data.remote.dto.auth.LoginRequest
+import com.itptit.roomrenting.data.remote.dto.auth.LoginResponse
+import com.itptit.roomrenting.util.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.Call
@@ -51,9 +52,12 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun saveLoginInfo(response: LoginResponse) {
         val sharedPreferences =
-            getApplication<Application>().getSharedPreferences("login_prefs", Context.MODE_PRIVATE)
+            getApplication<Application>().getSharedPreferences(
+                Constants.LOGIN_PREFS,
+                Context.MODE_PRIVATE
+            )
         with(sharedPreferences.edit()) {
-            putString("access_token", response.data.jwt)
+            putString(Constants.ACCESS_TOKEN, response.data.jwt)
             apply()
         }
     }

@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.domain.model
+package com.itptit.roomrenting.domain.model.auth
 
 data class User(
     val authorities: List<Authority>,

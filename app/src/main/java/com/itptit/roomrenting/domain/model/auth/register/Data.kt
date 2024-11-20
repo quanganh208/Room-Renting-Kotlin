@@ -1,6 +1,6 @@
 package com.itptit.roomrenting.domain.model.auth.register
 
-import com.itptit.roomrenting.domain.model.Authority
+import com.itptit.roomrenting.domain.model.auth.Authority
 
 data class Data(
     val accountNonExpired: Boolean,
