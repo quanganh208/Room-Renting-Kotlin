@@ -1,6 +1,4 @@
-package com.itptit.roomrenting.domain.model.room
-
-import com.itptit.roomrenting.domain.model.house.Owner
+package com.itptit.roomrenting.domain.model
 
 data class House(
     val addressLine: String,

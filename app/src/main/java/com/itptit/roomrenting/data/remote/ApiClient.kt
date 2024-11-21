@@ -16,7 +16,8 @@ object ApiClient {
     }
 
     private fun getAccessToken(): String? {
-        val sharedPreferences = appContext.getSharedPreferences(Constants.LOGIN_PREFS, Context.MODE_PRIVATE)
+        val sharedPreferences =
+            appContext.getSharedPreferences(Constants.LOGIN_PREFS, Context.MODE_PRIVATE)
         return sharedPreferences.getString(Constants.ACCESS_TOKEN, null)
     }
 
@@ -44,4 +45,7 @@ object ApiClient {
     val authService: AuthService = retrofit.create(AuthService::class.java)
     val houseService: HouseService = retrofit.create(HouseService::class.java)
     val roomService: RoomService = retrofit.create(RoomService::class.java)
+    val assetService: AssetService = retrofit.create(AssetService::class.java)
+    val invoiceService: InvoiceService = retrofit.create(InvoiceService::class.java)
+    val rentedRoomService: RentedRoomService = retrofit.create(RentedRoomService::class.java)
 }

@@ -1,6 +1,4 @@
-package com.itptit.roomrenting.domain.model.house
-
-import com.itptit.roomrenting.domain.model.Authority
+package com.itptit.roomrenting.domain.model
 
 data class Owner(
     val authorities: List<Authority>,

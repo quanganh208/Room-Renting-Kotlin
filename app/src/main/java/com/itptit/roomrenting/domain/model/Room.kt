@@ -1,8 +1,6 @@
-package com.itptit.roomrenting.domain.model.room
+package com.itptit.roomrenting.domain.model
 
-import com.itptit.roomrenting.domain.model.House
-
-data class Data(
+data class Room(
     val capacity: Int,
     val createdAt: String,
     val description: String,
