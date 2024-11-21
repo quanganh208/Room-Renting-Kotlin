@@ -43,4 +43,5 @@ object ApiClient {
 
     val authService: AuthService = retrofit.create(AuthService::class.java)
     val houseService: HouseService = retrofit.create(HouseService::class.java)
+    val roomService: RoomService = retrofit.create(RoomService::class.java)
 }

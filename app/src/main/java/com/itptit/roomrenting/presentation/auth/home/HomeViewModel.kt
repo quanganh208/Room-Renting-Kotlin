@@ -2,7 +2,8 @@ package com.itptit.roomrenting.presentation.auth.home
 
 import androidx.lifecycle.ViewModel
 import com.itptit.roomrenting.data.remote.ApiClient
-import com.itptit.roomrenting.data.remote.dto.house.AllHouseResponse
+import com.itptit.roomrenting.data.remote.dto.house.HouseResponse
+import com.itptit.roomrenting.data.remote.dto.room.AllRoomResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import retrofit2.Call
@@ -18,13 +19,13 @@ class HomeViewModel : ViewModel() {
 
     fun getHouses() {
         _isLoading.value = true
-        ApiClient.houseService.getHouses().enqueue(object : Callback<AllHouseResponse> {
-            override fun onResponse(call: Call<AllHouseResponse>, response: Response<AllHouseResponse>) {
+        ApiClient.roomService.getRoom(houseId = "4").enqueue(object : Callback<AllRoomResponse> {
+            override fun onResponse(call: Call<AllRoomResponse>, response: Response<AllRoomResponse>) {
                 _isLoading.value = false
                 _houses.value = (response.body()?.toString() ?: "No houses found")
             }
 
-            override fun onFailure(call: Call<AllHouseResponse>, t: Throwable) {
+            override fun onFailure(call: Call<AllRoomResponse>, t: Throwable) {
                 _isLoading.value = false
                 _houses.value = "Error: ${t.message}"
             }
