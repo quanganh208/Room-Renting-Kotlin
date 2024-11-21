@@ -6,11 +6,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.itptit.roomrenting.presentation.auth.home.HomeScreen
+import com.itptit.roomrenting.presentation.home.HomeScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
 import com.itptit.roomrenting.presentation.auth.register.RegisterScreen
 import com.itptit.roomrenting.presentation.auth.register.RegisterViewModel
+import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingViewModel
 
@@ -67,11 +68,8 @@ fun NavGraph(
                     navController = navController,
                 )
             }
-            composable(route = Route.BookmarkScreen.route) {
-                // BookmarkScreen() // Implement BookmarkScreen here
-            }
-            composable(route = Route.DetailsScreen.route) {
-                // DetailsScreen() // Implement DetailsScreen here
+            composable(route = Route.RentalHouseScreen.route) {
+                RentalHouseScreen(navController = navController)
             }
         }
     }

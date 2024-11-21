@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.presentation.auth.home
+package com.itptit.roomrenting.presentation.home
 
 import android.content.Context
 import androidx.compose.foundation.layout.*

@@ -71,7 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.itptit.roomrenting.R
-import com.itptit.roomrenting.presentation.auth.rentalhouse.LabelWithAsterisk
+import com.itptit.roomrenting.presentation.home.rentalhouse.LabelWithAsterisk
 import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable

@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.presentation.auth.home
+package com.itptit.roomrenting.presentation.home
 
 import androidx.lifecycle.ViewModel
 import com.itptit.roomrenting.data.remote.ApiClient

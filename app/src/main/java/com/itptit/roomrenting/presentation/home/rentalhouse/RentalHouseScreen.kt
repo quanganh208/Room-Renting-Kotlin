@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.presentation.auth.rentalhouse
+package com.itptit.roomrenting.presentation.home.rentalhouse
 import FullScreenLoadingModal
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

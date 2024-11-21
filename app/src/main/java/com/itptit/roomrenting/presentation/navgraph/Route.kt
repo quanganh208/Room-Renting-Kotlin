@@ -14,9 +14,7 @@ sealed class Route(
 
     object HomeScreen : Route(route = "homeScreen")
 
-    object BookmarkScreen : Route(route = "bookMarkScreen")
-
-    object DetailsScreen : Route(route = "detailsScreen")
+    object RentalHouseScreen : Route(route = "rentalHouseScreen")
 
     object AppStartNavigation : Route(route = "appStartNavigation")
 
