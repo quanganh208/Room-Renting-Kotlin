@@ -34,7 +34,7 @@ class MainViewModel @Inject constructor(
             } else {
                 _startDestination.value = Route.AppStartNavigation.route
             }
-            delay(300)
+            delay(1000)
             _splashCondition.value = false
         }
     }
