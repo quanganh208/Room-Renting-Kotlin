@@ -3,6 +3,7 @@ package com.itptit.roomrenting.presentation.auth.login
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import com.google.gson.Gson
 import com.itptit.roomrenting.data.remote.ApiClient
 import com.itptit.roomrenting.data.remote.dto.auth.LoginRequest
 import com.itptit.roomrenting.data.remote.dto.auth.LoginResponse
@@ -56,8 +57,10 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 Constants.LOGIN_PREFS,
                 Context.MODE_PRIVATE
             )
+        val gson = Gson()
+        val dataJson = gson.toJson(response.data)
         with(sharedPreferences.edit()) {
-            putString(Constants.ACCESS_TOKEN, response.data.jwt)
+            putString(Constants.USER_DATA, dataJson)
             apply()
         }
     }

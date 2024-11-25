@@ -1,5 +1,4 @@
-package com.itptit.roomrenting.presentation.home
-
+package com.itptit.roomrenting.presentation.home.main
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -12,13 +11,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -28,14 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     var selectedTab by remember { mutableStateOf("Quản Lý") }
@@ -45,7 +38,10 @@ fun HomeScreen(navController: NavController) {
 
     Scaffold(
         topBar = { HeaderWithDropdown(onDropdownClick = { showBottomSheet = true }, onShowMenuBottomSheet = {showMenuBottomSheet = true}) },
-        bottomBar = { BottomNavigationBar(selectedBottomNav, onTabSelected = { selectedBottomNav = it }) } // Sử dụng biến trạng thái riêng
+        bottomBar = { BottomNavigationBar(selectedBottomNav, onTabSelected = { selectedBottomNav = it }) }, // Sử dụng biến trạng thái riêng
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -124,8 +120,6 @@ fun HomeScreen(navController: NavController) {
 
     }
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -714,3 +708,39 @@ fun BottomNavItem(
     }
 }
 
+//        Column {
+//            Button(
+//                onClick = {
+//                    val sharedPreferences =
+//                        navController.context.getSharedPreferences(Constants.LOGIN_PREFS, Context.MODE_PRIVATE)
+//                    with(sharedPreferences.edit()) {
+//                        remove(Constants.ACCESS_TOKEN)
+//                        apply()
+//                    }
+//                    navController.navigate(Route.LoginScreen.route) {
+//                        popUpTo(Route.HomeScreen.route) { inclusive = true }
+//                    }
+//                }
+//            ) {
+//                Text(text = "Logout")
+//            }
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            Button(
+//                onClick = {
+//                    homeViewModel.getHouses()
+//                }
+//            ) {
+//                Text(text = "Get House")
+//            }
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            if (isLoading) {
+//                CircularProgressIndicator()
+//            } else {
+//                Text(text = houses)
+//            }
+//        }
+//    }

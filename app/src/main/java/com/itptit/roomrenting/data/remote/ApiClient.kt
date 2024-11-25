@@ -1,6 +1,8 @@
 package com.itptit.roomrenting.data.remote
 
 import android.content.Context
+import com.google.gson.Gson
+import com.itptit.roomrenting.domain.model.auth.login.Data
 import com.itptit.roomrenting.util.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,7 +20,9 @@ object ApiClient {
     private fun getAccessToken(): String? {
         val sharedPreferences =
             appContext.getSharedPreferences(Constants.LOGIN_PREFS, Context.MODE_PRIVATE)
-        return sharedPreferences.getString(Constants.ACCESS_TOKEN, null)
+        val gson = Gson()
+        val dataJson = sharedPreferences.getString(Constants.USER_DATA, null)
+        return gson.fromJson(dataJson, Data::class.java)?.jwt
     }
 
     private val logging = HttpLoggingInterceptor().apply {

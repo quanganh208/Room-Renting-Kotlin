@@ -2,10 +2,13 @@ package com.itptit.roomrenting.presentation.mainActivity
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.itptit.roomrenting.domain.model.auth.login.Data
 import com.itptit.roomrenting.domain.usecases.app_entry.ReadAppEntry
 import com.itptit.roomrenting.presentation.navgraph.Route
 import com.itptit.roomrenting.util.Constants
@@ -33,7 +36,7 @@ class MainViewModel @Inject constructor(
             } else {
                 _startDestination.value = Route.AppStartNavigation.route
             }
-            delay(300) //Without this delay, the onBoarding screen will show for a momentum.
+            delay(500) //Without this delay, the onBoarding screen will show for a momentum.
             _splashCondition.value = false
         }.launchIn(viewModelScope)
     }
@@ -44,7 +47,9 @@ class MainViewModel @Inject constructor(
                 Constants.LOGIN_PREFS,
                 Context.MODE_PRIVATE
             )
-        val accessToken = sharedPreferences.getString(Constants.ACCESS_TOKEN, null)
+        val gson = Gson()
+        val dataJson = sharedPreferences.getString(Constants.USER_DATA, null)
+        val accessToken = gson.fromJson(dataJson, Data::class.java)?.jwt
         _startDestination.value = if (accessToken != null) {
             Route.RoomRentingNavigation.route
         } else {

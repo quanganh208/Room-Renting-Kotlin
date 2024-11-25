@@ -1,8 +1,7 @@
-package com.itptit.roomrenting.presentation.home
+package com.itptit.roomrenting.presentation.home.main
 
 import androidx.lifecycle.ViewModel
 import com.itptit.roomrenting.data.remote.ApiClient
-import com.itptit.roomrenting.data.remote.dto.house.HouseResponse
 import com.itptit.roomrenting.data.remote.dto.room.AllRoomResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -30,12 +30,12 @@ import kotlinx.coroutines.delay
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun RegisterScreen(
-    navController: NavController,
-    onRegisterSuccess: () -> Unit,
-    viewModel: RegisterViewModel
+    navController: NavController, onRegisterSuccess: () -> Unit, viewModel: RegisterViewModel
 ) {
     var username by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
@@ -53,26 +53,21 @@ fun RegisterScreen(
     val emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$".toRegex(RegexOption.IGNORE_CASE)
     val phoneNumberRegex = "^(\\+84|0084|0)[235789][0-9]{8}\$".toRegex(RegexOption.IGNORE_CASE)
     val isButtonEnabled =
-        username.isNotEmpty() && fullName.isNotEmpty() && phoneNumber.isNotEmpty() &&
-                email.isNotEmpty() && emailRegex.matches(email) && phoneNumberRegex.matches(
+        username.isNotEmpty() && fullName.isNotEmpty() && phoneNumber.isNotEmpty() && email.isNotEmpty() && emailRegex.matches(
+            email
+        ) && phoneNumberRegex.matches(
             phoneNumber
         ) && password.length >= 6 && confirmPassword.length >= 6 && password == confirmPassword
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState() // Thêm state cho scroll
 
     FullScreenLoadingModal(isVisible = isLoading)
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .clickable(
-                onClick = {
-                    focusManager.clearFocus()
-                },
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
-    ) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)
+        .clickable(onClick = {
+            focusManager.clearFocus()
+        }, indication = null, interactionSource = remember { MutableInteractionSource() })) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -86,16 +81,14 @@ fun RegisterScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top = 48.dp,
-                        bottom = 16.dp
+                        top = 48.dp, bottom = 16.dp
                     ), // Tăng `top` padding để nút Back hạ xuống thấp hơn
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     onClick = {
                         navController.popBackStack() // Quay lại màn hình trước đó
-                    },
-                    modifier = Modifier
+                    }, modifier = Modifier
                         .padding(start = 0.dp) // Đảm bảo nút gần sát bên trái
                         .size(56.dp) // Tăng kích thước nút cho dễ nhấn hơn
                 ) {
@@ -193,8 +186,7 @@ fun RegisterScreen(
 
             // Password field
             Column(modifier = Modifier.fillMaxWidth()) {
-                TextFieldWithLabel(
-                    label = "Mật khẩu",
+                TextFieldWithLabel(label = "Mật khẩu",
                     placeholder = "Nhập mật khẩu",
                     keyboardType = KeyboardType.Password,
                     text = password,
@@ -205,8 +197,7 @@ fun RegisterScreen(
                     labelFontSize = 16f,
                     isPassword = true,
                     isPasswordVisible = passwordVisible,
-                    onPasswordVisibilityChange = { passwordVisible = !passwordVisible }
-                )
+                    onPasswordVisibilityChange = { passwordVisible = !passwordVisible })
                 if (passwordTouched && password.length < 6) {
                     Text(
                         text = "Mật khẩu tối thiểu 6 ký tự",
@@ -221,8 +212,7 @@ fun RegisterScreen(
 
             // Confirm Password field
             Column(modifier = Modifier.fillMaxWidth()) {
-                TextFieldWithLabel(
-                    label = "Nhập lại mật khẩu",
+                TextFieldWithLabel(label = "Nhập lại mật khẩu",
                     placeholder = "Nhập lại mật khẩu",
                     keyboardType = KeyboardType.Password,
                     text = confirmPassword,
@@ -235,8 +225,7 @@ fun RegisterScreen(
                     isPasswordVisible = confirmPasswordVisible,
                     onPasswordVisibilityChange = {
                         confirmPasswordVisible = !confirmPasswordVisible
-                    }
-                )
+                    })
                 if (confirmPasswordTouched && confirmPassword != password) {
                     Text(
                         text = "Mật khẩu không khớp",
@@ -266,9 +255,7 @@ fun RegisterScreen(
                 shape = RoundedCornerShape(6.dp),
             ) {
                 Text(
-                    text = "Đăng ký",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "Đăng ký", fontSize = 16.sp, fontWeight = FontWeight.Bold
                 )
             }
 
@@ -281,10 +268,24 @@ fun RegisterScreen(
                 )
 
                 if (registerResult.startsWith("Đăng ký thành công")) {
+                    var countdown by remember { mutableStateOf(3) }
+
                     LaunchedEffect(Unit) {
-                        delay(1000)
-                        onRegisterSuccess()
+                        while (countdown > 0) {
+                            delay(1000)
+                            countdown--
+                        }
+                        withContext(Dispatchers.Main) {
+                            onRegisterSuccess()
+                        }
                     }
+
+                    Text(
+                        text = "Chuyển về màn hình đăng nhập sau $countdown giây",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(32.dp))
@@ -363,12 +364,9 @@ fun TextFieldWithLabel(
             visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
             trailingIcon = {
                 if (isPassword) {
-                    Box(
-                        modifier = Modifier
-                            .clickable { onPasswordVisibilityChange() }
-                            .padding(horizontal = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(modifier = Modifier
+                        .clickable { onPasswordVisibilityChange() }
+                        .padding(horizontal = 8.dp), contentAlignment = Alignment.Center) {
                         Text(
                             text = if (isPasswordVisible) "Ẩn" else "Hiện",
                             color = Color(0xFF3B78AD),
