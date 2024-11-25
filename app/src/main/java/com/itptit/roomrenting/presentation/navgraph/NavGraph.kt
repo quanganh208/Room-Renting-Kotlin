@@ -1,7 +1,7 @@
 package com.itptit.roomrenting.presentation.navgraph
 
+import AddressLocationScreen
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -15,6 +15,7 @@ import com.itptit.roomrenting.presentation.auth.login.LoginScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
 import com.itptit.roomrenting.presentation.auth.register.RegisterScreen
 import com.itptit.roomrenting.presentation.auth.register.RegisterViewModel
+import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingViewModel
@@ -77,6 +78,11 @@ fun NavGraph(
             }
             composable(route = Route.RentalHouseScreen.route) {
                 RentalHouseScreen(navController = navController)
+            }
+            composable(route = Route.AddressLocationScreen.route) {
+                val viewModel: AddressLocationViewModel =
+                    hiltViewModel()
+                AddressLocationScreen(navController = navController, viewModel = viewModel)
             }
         }
     }

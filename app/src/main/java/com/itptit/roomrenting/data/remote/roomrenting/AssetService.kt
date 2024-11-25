@@ -1,4 +1,4 @@
-package com.itptit.roomrenting.data.remote
+package com.itptit.roomrenting.data.remote.roomrenting
 
 import com.itptit.roomrenting.data.remote.dto.asset.AllAssetResponse
 import com.itptit.roomrenting.data.remote.dto.asset.AssetResponse

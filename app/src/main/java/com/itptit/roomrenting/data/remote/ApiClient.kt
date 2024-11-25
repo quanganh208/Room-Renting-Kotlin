@@ -2,6 +2,12 @@ package com.itptit.roomrenting.data.remote
 
 import android.content.Context
 import com.google.gson.Gson
+import com.itptit.roomrenting.data.remote.roomrenting.AssetService
+import com.itptit.roomrenting.data.remote.roomrenting.AuthService
+import com.itptit.roomrenting.data.remote.roomrenting.HouseService
+import com.itptit.roomrenting.data.remote.roomrenting.InvoiceService
+import com.itptit.roomrenting.data.remote.roomrenting.RentedRoomService
+import com.itptit.roomrenting.data.remote.roomrenting.RoomService
 import com.itptit.roomrenting.domain.model.auth.login.Data
 import com.itptit.roomrenting.util.Constants
 import retrofit2.Retrofit
