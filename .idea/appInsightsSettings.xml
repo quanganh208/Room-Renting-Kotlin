@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.itptit.roomrenting" />
+                  <option name="mobileSdkAppId" value="1:143022299388:android:411519b7913de64f6b5f79" />
+                  <option name="projectId" value="room-renting-785d6" />
+                  <option name="projectNumber" value="143022299388" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
