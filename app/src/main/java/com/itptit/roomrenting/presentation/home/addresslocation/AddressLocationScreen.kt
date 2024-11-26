@@ -1,3 +1,6 @@
+package com.itptit.roomrenting.presentation.home.addresslocation
+
+import FullScreenLoadingModal
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,7 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.itptit.roomrenting.R
-import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
 import com.itptit.roomrenting.presentation.home.rentalhouse.LabelWithAsterisk
 
 @Composable
@@ -59,19 +60,21 @@ fun AddressLocationScreen(
     navController: NavController,
     viewModel: AddressLocationViewModel
 ) {
-    var district by remember { mutableStateOf("") }
-    var ward by remember { mutableStateOf("") }
+    var district by remember { mutableStateOf("Chọn quận/huyện") }
+    var ward by remember { mutableStateOf("Chọn phường/xã") }
     var detailedAddress by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
-    var expanded by remember { mutableStateOf(false) }
     var selectedProvince by remember { mutableStateOf("Chọn tỉnh/thành phố") }
-    val provinces by viewModel.result.collectAsState(initial = emptyList())
+    val provinces by viewModel.provinces.collectAsState(initial = emptyList())
+    val districts by viewModel.districts.collectAsState()
+    val wards by viewModel.wards.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getProvinces()
     }
 
+    FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -133,30 +136,42 @@ fun AddressLocationScreen(
                 label = "Tỉnh/Thành phố",
                 selectedOption = selectedProvince,
                 options = provinces.map { it.name },
-                onOptionSelected = { selectedProvince = it },
+                onOptionSelected = { selectedName ->
+                    selectedProvince = selectedName
+                    val selectedProvinceCode = provinces.find { it.name == selectedName }?.code ?: 0
+                    viewModel.getDistricts(selectedProvinceCode.toString()) // Fetch districts based on selected province code
+                    district = "Chọn quận/huyện"
+                    ward = "Chọn phường/xã"
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             LabelWithAsterisk("Quận/Huyện")
-            OutlinedTextField(
-                value = district,
-                onValueChange = { district = it },
-                placeholder = { Text("Nhập quận/huyện") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            DropdownSelector(
+                label = "Quận/Huyện",
+                selectedOption = district,
+                options = districts.districts.map { it.name },
+                onOptionSelected = { selectedDistrict ->
+                    district = selectedDistrict
+                    val selectedDistrictCode =
+                        districts.districts.find { it.name == selectedDistrict }?.code ?: 0
+                    viewModel.getWards(selectedDistrictCode.toString()) // Fetch wards based on selected district code
+                    ward = "Chọn phường/xã"
+                },
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             LabelWithAsterisk("Phường/Xã")
-            OutlinedTextField(
-                value = ward,
-                onValueChange = { ward = it },
-                placeholder = { Text("Nhập phường/xã") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            DropdownSelector(
+                label = "Phường/Xã",
+                selectedOption = ward,
+                options = wards.wards.map { it.name },
+                onOptionSelected = { ward = it },
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -172,43 +187,21 @@ fun AddressLocationScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Instructions and Buttons
-            Text(
-                text = "Định vị vị trí nhà cho thuê trên bản đồ giúp cho người tìm trọ tìm thấy bạn. Tăng tỷ lệ tiếp cận khách thuê.",
-                fontSize = 14.sp,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-
-            // Nút "Lấy vị trí trên bản đồ"
-            Button(
-                onClick = { /* TODO: Handle Map Location */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE0E0E0)), // Màu xám nhẹ
-                shape = RoundedCornerShape(6.dp) // Bo nhẹ góc giống nút "Đóng"
-            ) {
-                Icon(Icons.Default.LocationOn, contentDescription = null, tint = Color.Black)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Lấy vị trí trên bản đồ",
-                    fontFamily = FontFamily(Font(R.font.roboto_medium)),
-                    fontSize = 16.sp,
-                    color = Color.Black
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp)) // Khoảng cách nhỏ giữa các nút
-
             // Nút "Xác nhận địa chỉ & tiếp tục"
             Button(
-                onClick = { /* TODO: Handle Confirm Address */ },
+                onClick = {
+                    // Truyền dữ liệu về màn hình trước đó
+                    navController.previousBackStackEntry?.savedStateHandle?.set("address", detailedAddress)
+                    navController.previousBackStackEntry?.savedStateHandle?.set("province", selectedProvince)
+                    navController.previousBackStackEntry?.savedStateHandle?.set("district", district)
+                    navController.previousBackStackEntry?.savedStateHandle?.set("ward", ward)
+                    navController.popBackStack()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)), // Màu xanh lá cây
-                shape = RoundedCornerShape(6.dp) // Bo nhẹ góc giống nút "Tiếp theo"
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                shape = RoundedCornerShape(6.dp)
             ) {
                 Text(
                     text = "Xác nhận địa chỉ & tiếp tục",
@@ -289,7 +282,7 @@ fun DropdownSelector(
                 text = selectedOption,
                 style = androidx.compose.ui.text.TextStyle(
                     fontSize = 16.sp,
-                    color = if (selectedOption == "Chọn tỉnh/thành phố") Color.Gray else Color.Black
+                    color = if ("Chọn" in selectedOption) Color.Gray else Color.Black
                 )
             )
         }

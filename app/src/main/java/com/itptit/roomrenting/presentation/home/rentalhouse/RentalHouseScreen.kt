@@ -1,9 +1,10 @@
 package com.itptit.roomrenting.presentation.home.rentalhouse
 
+import FullScreenLoadingModal
+import RentalHouseViewModel
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -28,15 +29,44 @@ import androidx.navigation.NavController
 import com.itptit.roomrenting.R
 import com.itptit.roomrenting.presentation.navgraph.Route
 
-
 @Composable
-fun RentalHouseScreen(navController: NavController) {
-    var roomCount by remember { mutableStateOf("") }
-    var hostelName by remember { mutableStateOf("") }
-    var isAutomaticRoomCreation by remember { mutableStateOf(true) }
-    var floorCount by remember { mutableStateOf("") }
-    val focusManager = LocalFocusManager.current
+fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewModel) {
+    val hostelName by viewModel.hostelName.collectAsState()
+    val floorCount by viewModel.floorCount.collectAsState()
+    val address by viewModel.address.collectAsState()
+    val province by viewModel.province.collectAsState()
+    val district by viewModel.district.collectAsState()
+    val ward by viewModel.ward.collectAsState()
+    val result by viewModel.result.collectAsState()
 
+    var isDialogVisible by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val isButtonEnabled =
+        hostelName.isNotEmpty() && floorCount.isNotEmpty() && address.isNotEmpty() && province.isNotEmpty() && district.isNotEmpty() && ward.isNotEmpty()
+
+    LaunchedEffect(result) {
+        if (result.isNotEmpty()) {
+            isDialogVisible = true
+        }
+    }
+
+    LaunchedEffect(navController.currentBackStackEntry?.savedStateHandle) {
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getLiveData<String>("address")?.observeForever { newAddress ->
+            viewModel.updateAddress(newAddress ?: "")
+        }
+        savedStateHandle?.getLiveData<String>("province")?.observeForever { newProvince ->
+            viewModel.updateProvince(newProvince ?: "")
+        }
+        savedStateHandle?.getLiveData<String>("district")?.observeForever { newDistrict ->
+            viewModel.updateDistrict(newDistrict ?: "")
+        }
+        savedStateHandle?.getLiveData<String>("ward")?.observeForever { newWard ->
+            viewModel.updateWard(newWard ?: "")
+        }
+    }
+
+    FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -60,8 +90,7 @@ fun RentalHouseScreen(navController: NavController) {
                 fontFamily = FontFamily(Font(R.font.roboto_bold)),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-
-                )
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -91,7 +120,7 @@ fun RentalHouseScreen(navController: NavController) {
             LabelWithAsterisk(label = "Tên nhà trọ")
             OutlinedTextField(
                 value = hostelName,
-                onValueChange = { hostelName = it },
+                onValueChange = { viewModel.updateHostelName(it) },
                 placeholder = { Text("Ví dụ: Đức Sơn") },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
@@ -114,20 +143,19 @@ fun RentalHouseScreen(navController: NavController) {
                 maxLines = 1
             )
 
-
             Spacer(modifier = Modifier.height(8.dp))
 
             // Thiết lập số tầng
             LabelWithAsterisk(label = "Thiết lập số tầng")
             OutlinedTextField(
                 value = floorCount,
-                onValueChange = { floorCount = it },
+                onValueChange = { viewModel.updateFloorCount(it) },
                 placeholder = { Text("Ví dụ: 3") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 trailingIcon = {
                     if (floorCount.isNotEmpty()) {
-                        IconButton(onClick = { floorCount = "" }) {
+                        IconButton(onClick = { viewModel.updateFloorCount("") }) {
                             Icon(Icons.Default.Clear, contentDescription = "Xóa nội dung")
                         }
                     }
@@ -171,50 +199,66 @@ fun RentalHouseScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Nút Đóng và Tiếp theo
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp) // Khoảng cách giữa hai nút
+            Text(
+                text = if (address.isNotEmpty() && ward.isNotEmpty() && district.isNotEmpty() && province.isNotEmpty()) {
+                    "Địa chỉ đã chọn: $address, $ward, $district, $province"
+                } else {
+                    "Chưa có địa chỉ được chọn"
+                },
+                fontFamily = FontFamily(Font(R.font.roboto_medium)),
+                fontWeight = FontWeight.Medium,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    viewModel.createHouse(
+                        addressLine = address,
+                        city = province,
+                        district = district,
+                        floorCount = floorCount.toInt(),
+                        name = hostelName,
+                        ward = ward
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isButtonEnabled) Color(0xFF0B9E43) else Color(0xFFA5D6A7),
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(6.dp),
             ) {
-                // Nút "Đóng" với màu xám đậm hơn và không có border
-                Button(
-                    onClick = { /* Xử lý khi nhấn nút Đóng */ },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFE0E0E0), // Màu nền xám hơi đậm
-                        contentColor = Color.Black // Màu chữ đen
-                    ),
-                    shape = RoundedCornerShape(4.dp) // Góc hơi tròn nhẹ
-                ) {
-                    Text(
-                        text = "Đóng",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                // Nút "Tiếp theo"
-                Button(
-                    onClick = { /* Xử lý khi nhấn nút Tiếp theo */ },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4CAF50), // Màu nền xanh lá cây
-                        contentColor = Color.White // Màu chữ trắng
-                    ),
-                    shape = RoundedCornerShape(4.dp) // Góc hơi tròn nhẹ
-                ) {
-                    Text(
-                        text = "Tiếp theo",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                Text(
+                    text = "Thêm mới nhà cho thuê",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
-
-
         }
     }
+    if (isDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { isDialogVisible = false },
+            title = { Text("Thông báo") },
+            text = { Text(result) },
+            confirmButton = {
+                Button(onClick = {
+                    isDialogVisible = false
+                    if ("thành công" in result) {
+                        navController.navigate(Route.HomeScreen.route)
+                    }
+                }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 }
+
 
 @Composable
 fun SectionHeader(title: String, description: String) {

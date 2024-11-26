@@ -36,7 +36,7 @@ class MainViewModel @Inject constructor(
             } else {
                 _startDestination.value = Route.AppStartNavigation.route
             }
-            delay(500) //Without this delay, the onBoarding screen will show for a momentum.
+            delay(1000) //Without this delay, the onBoarding screen will show for a momentum.
             _splashCondition.value = false
         }.launchIn(viewModelScope)
     }
