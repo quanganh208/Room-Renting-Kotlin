@@ -21,6 +21,9 @@ interface HouseService {
     @GET("houses/{houseId}")
     fun getHouse(@Path("houseId") houseId: String): Call<HouseResponse>
 
+    @GET("owner/houses")
+    fun getOwnerHouses(): Call<AllHouseResponse>
+
     @PUT("owner/houses/{houseId}")
     fun updateHouse(@Path("houseId") houseId: String, @Body request: HouseRequest): Call<HouseResponse>
 

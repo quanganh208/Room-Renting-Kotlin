@@ -24,6 +24,10 @@ sealed class Route(
 
     object MoreInformationScreen: Route(route = "moreInformationScreen")
 
+    object ServiceScreen : Route(route = "serviceScreen")
+
+    object AddServiceScreen : Route(route = "addServiceScreen")
+
     object AppStartNavigation : Route(route = "appStartNavigation")
 
     object AuthNavigation : Route(route = "authNavigation")

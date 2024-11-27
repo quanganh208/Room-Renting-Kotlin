@@ -22,6 +22,8 @@ import com.itptit.roomrenting.presentation.home.moreinfo.MoreInformationScreen
 import com.itptit.roomrenting.presentation.navgraph.Route
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.BottomNavigationItem
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.RoomRentingBottomNavigation
+import com.itptit.roomrenting.presentation.service.AddServiceScreen
+import com.itptit.roomrenting.presentation.service.ServiceScreen
 
 @Composable
 fun RoomRentingNavigator(sharedNavController: NavController) {
@@ -29,7 +31,7 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
     val bottomNavigationItems = remember {
         listOf(
             BottomNavigationItem(icon = R.drawable.ic_home, text = "Trang chủ"),
-            BottomNavigationItem(icon = R.drawable.ic_bookmark, text = "Cá nhân"),
+            BottomNavigationItem(icon = R.drawable.ic_user, text = "Cá nhân"),
         )
     }
 
@@ -89,6 +91,20 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                         navigateToLogin(sharedNavController)
                     }
                 )
+            }
+
+            composable(route = Route.ServiceScreen.route) {
+                OnBackClickStateSaver(navController)
+                ServiceScreen(navigaToThemDV = {
+                    navController.navigate(Route.AddServiceScreen.route)
+                }, onBack = {
+                    navController.popBackStack()
+                })
+            }
+            composable(route = Route.AddServiceScreen.route) {
+                AddServiceScreen(onBack = {
+                    navController.popBackStack()
+                })
             }
         }
     }

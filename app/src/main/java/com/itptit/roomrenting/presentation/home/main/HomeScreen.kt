@@ -3,7 +3,6 @@ package com.itptit.roomrenting.presentation.home.main
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,6 +29,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -91,7 +91,10 @@ fun HomeScreen(navController: NavController) {
                 FeatureItemStyled(
                     icon = Icons.Default.Info,
                     title = "Quản lý dịch vụ",
-                    description = "Theo dõi và quản lý các dịch vụ bổ sung như vệ sinh, internet, và các tiện ích khác trong nhà trọ."
+                    description = "Theo dõi và quản lý các dịch vụ bổ sung như vệ sinh, internet, và các tiện ích khác trong nhà trọ.",
+                    onClick = {
+                        navController.navigate(Route.ServiceScreen.route)
+                    }
                 )
 
                 FeatureItemStyled(
