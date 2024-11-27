@@ -7,7 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.itptit.roomrenting.presentation.home.main.HomeScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
 import com.itptit.roomrenting.presentation.auth.register.RegisterScreen
@@ -19,6 +18,7 @@ import com.itptit.roomrenting.presentation.home.addcontract.AddContractViewModel
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationScreen
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
+import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.RoomRentingNavigator
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingViewModel
 
@@ -30,8 +30,7 @@ fun NavGraph(
 
     NavHost(navController = navController, startDestination = startDestination) {
         navigation(
-            route = Route.AppStartNavigation.route,
-            startDestination = Route.OnBoardingScreen.route
+            route = Route.AppStartNavigation.route, startDestination = Route.OnBoardingScreen.route
         ) {
             composable(route = Route.OnBoardingScreen.route) {
                 val viewModel: OnBoardingViewModel = hiltViewModel()
@@ -41,11 +40,10 @@ fun NavGraph(
 
         navigation(route = Route.AuthNavigation.route, startDestination = Route.LoginScreen.route) {
             composable(route = Route.LoginScreen.route) {
-                val viewModel: LoginViewModel =
-                    hiltViewModel() // Using Hilt for dependency injection
+                val viewModel: LoginViewModel = hiltViewModel()
                 LoginScreen(
                     navController = navController, onLoginSuccess = {
-                        navController.navigate(Route.HomeScreen.route) {
+                        navController.navigate(Route.RoomRentingNavigation.route) {
                             popUpTo(Route.LoginScreen.route) { inclusive = true }
                         }
                     }, viewModel = viewModel
@@ -53,8 +51,7 @@ fun NavGraph(
             }
 
             composable(route = Route.RegisterScreen.route) {
-                val viewModel: RegisterViewModel =
-                    hiltViewModel() // Using Hilt for dependency injection
+                val viewModel: RegisterViewModel = hiltViewModel()
                 RegisterScreen(
                     navController = navController, onRegisterSuccess = {
                         navController.navigate(Route.LoginScreen.route) {
@@ -67,32 +64,27 @@ fun NavGraph(
 
         navigation(
             route = Route.RoomRentingNavigation.route,
-            startDestination = Route.AddContractScreen.route
+            startDestination = Route.RoomRentingNavigator.route
         ) {
-            composable(route = Route.HomeScreen.route) {
-                val viewModel: RegisterViewModel =
-                    hiltViewModel()
-                HomeScreen(
-                    navController = navController,
-                )
+            composable(route = Route.RoomRentingNavigator.route) {
+                RoomRentingNavigator(sharedNavController = navController)
             }
+
             composable(route = Route.RentalHouseScreen.route) {
-                val viewModel: RentalHouseViewModel =
-                    hiltViewModel()
+                val viewModel: RentalHouseViewModel = hiltViewModel()
                 RentalHouseScreen(navController = navController, viewModel = viewModel)
             }
             composable(route = Route.AddressLocationScreen.route) {
-                val viewModel: AddressLocationViewModel =
-                    hiltViewModel()
+                val viewModel: AddressLocationViewModel = hiltViewModel()
                 AddressLocationScreen(navController = navController, viewModel = viewModel)
             }
             composable(route = Route.AddAssetScreen.route) {
-                 val viewModel: AddAssetViewModel = hiltViewModel()
-                 AddAssetScreen(navController = navController, viewModel = viewModel)
+                val viewModel: AddAssetViewModel = hiltViewModel()
+                AddAssetScreen(navController = navController, viewModel = viewModel)
             }
             composable(route = Route.AddContractScreen.route) {
-                 val viewModel: AddContractViewModel = hiltViewModel()
-                 AddContractScreen(navController = navController, viewModel = viewModel)
+                val viewModel: AddContractViewModel = hiltViewModel()
+                AddContractScreen(navController = navController, viewModel = viewModel)
             }
         }
     }

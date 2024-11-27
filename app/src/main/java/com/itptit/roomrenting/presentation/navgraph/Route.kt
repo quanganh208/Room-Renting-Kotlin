@@ -22,10 +22,14 @@ sealed class Route(
 
     object AddContractScreen : Route(route = "addContractScreen")
 
+    object MoreInformationScreen: Route(route = "moreInformationScreen")
+
     object AppStartNavigation : Route(route = "appStartNavigation")
 
     object AuthNavigation : Route(route = "authNavigation")
 
     object RoomRentingNavigation : Route(route = "roomRentingNavigation")
+
+    object RoomRentingNavigator : Route(route = "roomRentingNavigator")
 }
 

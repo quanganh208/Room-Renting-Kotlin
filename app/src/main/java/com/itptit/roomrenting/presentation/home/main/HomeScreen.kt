@@ -3,9 +3,12 @@ package com.itptit.roomrenting.presentation.home.main
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.List
@@ -16,7 +19,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -32,22 +34,20 @@ import androidx.navigation.NavController
 @Composable
 fun HomeScreen(navController: NavController) {
     var selectedTab by remember { mutableStateOf("Quản Lý") }
-    var selectedBottomNav by remember { mutableStateOf("Trang Chủ") } // Thêm biến trạng thái cho thanh dưới
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMenuBottomSheet by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { HeaderWithDropdown(onDropdownClick = { showBottomSheet = true }, onShowMenuBottomSheet = {showMenuBottomSheet = true}) },
-        bottomBar = { BottomNavigationBar(selectedBottomNav, onTabSelected = { selectedBottomNav = it }) }, // Sử dụng biến trạng thái riêng
         modifier = Modifier
             .fillMaxSize()
-            .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .padding(top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding())
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
                 .background(Color(0xFFF0F4F8)) // Tổng thể màu nền
+                .padding(top = paddingValues.calculateTopPadding())
         ) {
             // Thanh tab "Quản Lý" và "Tổng Quan"
             TabSectionFullWidth(
@@ -69,40 +69,43 @@ fun HomeScreen(navController: NavController) {
                 }
             }
 
-            // Các thành phần khác
-            SectionTitleWithIconNoBackground(
-                title = "Menu quản lý nhà trọ",
-                description = "Quản lý đối tương nghiệp vụ trong nhà trọ"
-            )
-            FeatureItemStyled(
-                icon = Icons.Default.Home,
-                title = "Quản lý phòng",
-                description = "Theo dõi và quản lý danh sách phòng, trạng thái sử dụng, và cập nhật thông tin phòng trọ một cách dễ dàng."
-            )
+            Column(modifier = Modifier.fillMaxHeight().verticalScroll(rememberScrollState())
+            ){
+                // Các thành phần khác
+                SectionTitleWithIconNoBackground(
+                    title = "Menu quản lý nhà trọ",
+                    description = "Quản lý đối tương nghiệp vụ trong nhà trọ"
+                )
+                FeatureItemStyled(
+                    icon = Icons.Default.Home,
+                    title = "Quản lý phòng",
+                    description = "Theo dõi và quản lý danh sách phòng, trạng thái sử dụng, và cập nhật thông tin phòng trọ một cách dễ dàng."
+                )
 
-            FeatureItemStyled(
-                icon = Icons.AutoMirrored.Filled.List,
-                title = "Quản lý hóa đơn",
-                description = "Quản lý hóa đơn tiền thuê, điện, nước và các khoản phí khác của từng khách hàng."
-            )
+                FeatureItemStyled(
+                    icon = Icons.AutoMirrored.Filled.List,
+                    title = "Quản lý hóa đơn",
+                    description = "Quản lý hóa đơn tiền thuê, điện, nước và các khoản phí khác của từng khách hàng."
+                )
 
-            FeatureItemStyled(
-                icon = Icons.Default.Info,
-                title = "Quản lý dịch vụ",
-                description = "Theo dõi và quản lý các dịch vụ bổ sung như vệ sinh, internet, và các tiện ích khác trong nhà trọ."
-            )
+                FeatureItemStyled(
+                    icon = Icons.Default.Info,
+                    title = "Quản lý dịch vụ",
+                    description = "Theo dõi và quản lý các dịch vụ bổ sung như vệ sinh, internet, và các tiện ích khác trong nhà trọ."
+                )
 
-            FeatureItemStyled(
-                icon = Icons.AutoMirrored.Filled.ArrowForward,
-                title = "Quản lý hợp đồng",
-                description = "Quản lý thông tin hợp đồng của từng khách thuê, bao gồm ngày bắt đầu, ngày kết thúc, và các điều khoản chi tiết."
-            )
+                FeatureItemStyled(
+                    icon = Icons.AutoMirrored.Filled.ArrowForward,
+                    title = "Quản lý hợp đồng",
+                    description = "Quản lý thông tin hợp đồng của từng khách thuê, bao gồm ngày bắt đầu, ngày kết thúc, và các điều khoản chi tiết."
+                )
 
-            FeatureItemStyled(
-                icon = Icons.Default.Search,
-                title = "Quản lý tài sản",
-                description = "Theo dõi và kiểm kê tài sản của nhà trọ, bao gồm nội thất, thiết bị, và các vật dụng khác."
-            )
+                FeatureItemStyled(
+                    icon = Icons.Default.Search,
+                    title = "Quản lý tài sản",
+                    description = "Theo dõi và kiểm kê tài sản của nhà trọ, bao gồm nội thất, thiết bị, và các vật dụng khác."
+                )
+            }
         }
 
         // Hiển thị BottomSheet khi showBottomSheet = true
@@ -411,69 +414,6 @@ fun BottomSheetContent(onClose: () -> Unit) {
     }
 }
 
-
-@Composable
-fun FeatureManagementItem(
-    title: String,
-    subtitle: String,
-    address: String,
-    onDelete: () -> Unit,
-    onManage: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            // Tiêu đề và phụ đề
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.Black
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
-            Text(
-                text = address,
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Nút "Xóa" và "Quản lý"
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(
-                    onClick = onDelete,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7043)) // Màu cam
-                ) {
-                    Text(text = "Xóa", color = Color.White)
-                }
-                Button(
-                    onClick = onManage,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)) // Màu xanh
-                ) {
-                    Text(text = "Quản Lý", color = Color.White)
-                }
-            }
-        }
-    }
-}
-
 @Composable
 fun TabSectionFullWidth(selectedTab: String, onTabSelected: (String) -> Unit) {
     Row(
@@ -649,62 +589,6 @@ fun FeatureItemStyled(
                 modifier = Modifier.size(24.dp)
             )
         }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(selectedBottomNav: String, onTabSelected: (String) -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp) // Chiều cao tiêu chuẩn
-            .background(Color.White), // Nền trắng
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        BottomNavItem(
-            title = "Trang Chủ",
-            icon = Icons.Default.Home,
-            isSelected = selectedBottomNav == "Trang Chủ",
-            onClick = { onTabSelected("Trang Chủ") },
-            modifier = Modifier.weight(1f) // Chiếm 50% chiều rộng
-        )
-        BottomNavItem(
-            title = "Cá Nhân",
-            icon = Icons.Default.Person,
-            isSelected = selectedBottomNav == "Cá Nhân",
-            onClick = { onTabSelected("Cá Nhân") },
-            modifier = Modifier.weight(1f) // Chiếm 50% chiều rộng
-        )
-    }
-}
-
-@Composable
-fun BottomNavItem(
-    title: String,
-    icon: ImageVector,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .clickable(onClick = onClick),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            tint = if (isSelected) Color(0xFF4CAF50) else Color.Gray,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = title,
-            color = if (isSelected) Color(0xFF4CAF50) else Color.Gray,
-            style = MaterialTheme.typography.bodySmall
-        )
     }
 }
 

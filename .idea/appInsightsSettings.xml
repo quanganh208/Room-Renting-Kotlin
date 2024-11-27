@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.itptit.roomrenting" />
-                  <option name="mobileSdkAppId" value="1:143022299388:android:411519b7913de64f6b5f79" />
-                  <option name="projectId" value="room-renting-785d6" />
-                  <option name="projectNumber" value="143022299388" />
+                  <option name="mobileSdkAppId" value="1:256235301108:android:7f9108c5735758874596a1" />
+                  <option name="projectId" value="chat-crm-f8a68" />
+                  <option name="projectNumber" value="256235301108" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

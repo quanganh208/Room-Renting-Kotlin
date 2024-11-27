@@ -1,5 +1,6 @@
 package com.itptit.roomrenting.presentation.home.moreinfo
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -18,32 +20,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.itptit.roomrenting.R
+import com.itptit.roomrenting.util.Constants
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MoreInformationScreen(navController: NavController) {
-    Scaffold(
-        bottomBar = {
-            BottomNavigationBar(navController = navController)
-        }
-    ) { paddingValues ->
+fun MoreInformationScreen(onLogoutSuccess: () -> Unit) {
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
                 .background(Color(0xFFF5F5F5))
-                .padding(horizontal = 16.dp) // Áp dụng padding ngang ở cấp cao nhất
+                .padding(horizontal = 16.dp)
         ) {
             // Phần Header
             HeaderSection(
-                modifier = Modifier.padding(vertical = 8.dp) // Chỉ padding dọc
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clip(RoundedCornerShape(16.dp))
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -53,15 +52,15 @@ fun MoreInformationScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
+                    .clip(RoundedCornerShape(16.dp))
                     .background(Color.White)
-                    .padding(vertical = 16.dp) // Chỉ padding dọc
+                    .padding(vertical = 16.dp)
             ) {
-                // Danh sách các mục với mũi tên điều hướng
                 val items = listOf(
                     ItemData(
                         title = "Chia sẻ APP khách thuê",
                         icon = Icons.Default.Share,
-                        description = "Khách kết nối với bạn, nhận hóa đơn tự động & nhiều tiện ích khách"
+                        description = "Khách kết nối với bạn, nhận hoá đơn tự động & nhiều tiện ích khách"
                     ),
                     ItemData(
                         title = "Đánh giá phần mềm",
@@ -102,8 +101,7 @@ fun MoreInformationScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Phần Đăng xuất
-                LogoutSection()
+                LogoutSection(onLogoutSuccess = onLogoutSuccess)
             }
         }
     }
@@ -115,13 +113,15 @@ fun HeaderSection(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(vertical = 16.dp) // Loại bỏ padding ngang
+            .padding(vertical = 16.dp)
     ) {
         // Dòng đầu tiên: Avatar và lời chào
         Row(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
         ) {
             Row(verticalAlignment = Alignment.Top) {
                 Box(
@@ -178,7 +178,7 @@ fun HeaderSection(modifier: Modifier = Modifier) {
                 }
             }
             Icon(
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Forward",
                 tint = Color.Gray
             )
@@ -190,7 +190,9 @@ fun HeaderSection(modifier: Modifier = Modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
         ) {
             Column {
                 Text(
@@ -240,7 +242,8 @@ fun OptionRowWithArrow(item: ItemData) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { /* Xử lý khi nhấn vào mục */ }
-            .padding(vertical = 12.dp), // Chỉ padding dọc
+            .padding(vertical = 12.dp)
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -298,78 +301,32 @@ fun OptionRowWithArrow(item: ItemData) {
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-    NavigationBar(
-        containerColor = Color.White,
-        contentColor = Color(0xFF4CAF50)
-    ) {
-        // Chỉ giữ lại hai mục: "Trang chủ" và "Thêm"
-        val items = listOf("Trang chủ", "Thêm")
-        val icons = listOf(
-            Icons.Default.Home,
-            Icons.Default.MoreHoriz
-        )
+fun LogoutSection(onLogoutSuccess: () -> Unit) {
+    val context = LocalContext.current
 
-        // Sử dụng Row để căn chỉnh hai mục với đường viền phân cách
-        Row(
-            modifier = Modifier
-                .fillMaxWidth() // Chiếm toàn bộ chiều rộng của màn hình
-                .background(Color.White),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            // Mục đầu tiên: "Trang chủ"
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = icons[0],
-                        contentDescription = items[0]
-                    )
-                },
-                label = { Text(text = items[0]) },
-                selected = false, // Bạn nên quản lý trạng thái chọn
-                onClick = { /* Xử lý khi nhấn vào */ },
-                modifier = Modifier.weight(1f)
-            )
-
-            // Đường phân cách giữa hai mục
-            Divider(
-                color = Color.LightGray,
-                modifier = Modifier
-                    .height(40.dp) // Chiều cao vừa đủ cho đường phân cách
-                    .width(1.dp)
-            )
-
-            // Mục thứ hai: "Thêm"
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = icons[1],
-                        contentDescription = items[1]
-                    )
-                },
-                label = { Text(text = items[1]) },
-                selected = false, // Bạn nên quản lý trạng thái chọn
-                onClick = { /* Xử lý khi nhấn vào */ },
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-fun LogoutSection() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Xử lý đăng xuất */ }
             .background(Color.White)
-            .padding(vertical = 16.dp), // Chỉ padding dọc
+            .padding(vertical = 16.dp)
+            .clickable {
+                val sharedPreferences = context.getSharedPreferences(
+                    Constants.LOGIN_PREFS,
+                    Context.MODE_PRIVATE
+                )
+                sharedPreferences
+                    .edit()
+                    .apply {
+                        remove(Constants.USER_DATA)
+                        apply()
+                    }
+                onLogoutSuccess()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.ExitToApp,
+            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
             contentDescription = "Logout",
             tint = Color.Red,
             modifier = Modifier.size(24.dp)
@@ -383,6 +340,7 @@ fun LogoutSection() {
         )
     }
 }
+
 
 data class ItemData(
     val title: String,
