@@ -1,5 +1,6 @@
 package com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator
 
+import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseViewModel
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,14 +12,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationScreen
+import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
 import com.itptit.roomrenting.presentation.home.main.HomeScreen
+import com.itptit.roomrenting.presentation.home.main.HomeViewModel
 import com.itptit.roomrenting.presentation.home.moreinfo.MoreInformationScreen
+import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
 import com.itptit.roomrenting.presentation.navgraph.Route
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.BottomNavigationItem
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.RoomRentingBottomNavigation
@@ -81,8 +87,9 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
             Modifier.padding(bottom = bottomPadding)
         ) {
             composable(route = Route.HomeScreen.route) {
+                val viewModel: HomeViewModel = hiltViewModel()
                 HomeScreen(
-                    navController = navController,
+                    navController = navController, viewModel = viewModel
                 )
             }
             composable(route = Route.MoreInformationScreen.route) {
@@ -105,6 +112,15 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 AddServiceScreen(onBack = {
                     navController.popBackStack()
                 })
+            }
+
+            composable(route = Route.RentalHouseScreen.route) {
+                val viewModel: RentalHouseViewModel = hiltViewModel()
+                RentalHouseScreen(navController = navController, viewModel = viewModel)
+            }
+            composable(route = Route.AddressLocationScreen.route) {
+                val viewModel: AddressLocationViewModel = hiltViewModel()
+                AddressLocationScreen(navController = navController, viewModel = viewModel)
             }
         }
     }

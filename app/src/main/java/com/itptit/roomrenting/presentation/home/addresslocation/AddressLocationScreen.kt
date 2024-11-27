@@ -1,6 +1,6 @@
 package com.itptit.roomrenting.presentation.home.addresslocation
 
-import FullScreenLoadingModal
+import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

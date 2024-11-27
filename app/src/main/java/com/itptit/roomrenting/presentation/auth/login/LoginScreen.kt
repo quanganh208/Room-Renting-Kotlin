@@ -1,6 +1,6 @@
 package com.itptit.roomrenting.presentation.auth.login
 
-import FullScreenLoadingModal
+import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

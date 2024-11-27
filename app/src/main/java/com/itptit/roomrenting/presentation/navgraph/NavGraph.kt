@@ -1,6 +1,5 @@
 package com.itptit.roomrenting.presentation.navgraph
 
-import RentalHouseViewModel
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -15,9 +14,6 @@ import com.itptit.roomrenting.presentation.home.addasset.AddAssetScreen
 import com.itptit.roomrenting.presentation.home.addasset.AddAssetViewModel
 import com.itptit.roomrenting.presentation.home.addcontract.AddContractScreen
 import com.itptit.roomrenting.presentation.home.addcontract.AddContractViewModel
-import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationScreen
-import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
-import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.RoomRentingNavigator
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingViewModel
@@ -70,14 +66,6 @@ fun NavGraph(
                 RoomRentingNavigator(sharedNavController = navController)
             }
 
-            composable(route = Route.RentalHouseScreen.route) {
-                val viewModel: RentalHouseViewModel = hiltViewModel()
-                RentalHouseScreen(navController = navController, viewModel = viewModel)
-            }
-            composable(route = Route.AddressLocationScreen.route) {
-                val viewModel: AddressLocationViewModel = hiltViewModel()
-                AddressLocationScreen(navController = navController, viewModel = viewModel)
-            }
             composable(route = Route.AddAssetScreen.route) {
                 val viewModel: AddAssetViewModel = hiltViewModel()
                 AddAssetScreen(navController = navController, viewModel = viewModel)

@@ -1,7 +1,6 @@
 package com.itptit.roomrenting.presentation.home.rentalhouse
 
-import FullScreenLoadingModal
-import RentalHouseViewModel
+import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
