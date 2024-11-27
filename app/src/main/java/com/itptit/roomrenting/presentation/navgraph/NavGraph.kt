@@ -12,6 +12,10 @@ import com.itptit.roomrenting.presentation.auth.login.LoginScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
 import com.itptit.roomrenting.presentation.auth.register.RegisterScreen
 import com.itptit.roomrenting.presentation.auth.register.RegisterViewModel
+import com.itptit.roomrenting.presentation.home.addasset.AddAssetScreen
+import com.itptit.roomrenting.presentation.home.addasset.AddAssetViewModel
+import com.itptit.roomrenting.presentation.home.addcontract.AddContractScreen
+import com.itptit.roomrenting.presentation.home.addcontract.AddContractViewModel
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationScreen
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
@@ -63,7 +67,7 @@ fun NavGraph(
 
         navigation(
             route = Route.RoomRentingNavigation.route,
-            startDestination = Route.RentalHouseScreen.route
+            startDestination = Route.AddContractScreen.route
         ) {
             composable(route = Route.HomeScreen.route) {
                 val viewModel: RegisterViewModel =
@@ -81,6 +85,14 @@ fun NavGraph(
                 val viewModel: AddressLocationViewModel =
                     hiltViewModel()
                 AddressLocationScreen(navController = navController, viewModel = viewModel)
+            }
+            composable(route = Route.AddAssetScreen.route) {
+                 val viewModel: AddAssetViewModel = hiltViewModel()
+                 AddAssetScreen(navController = navController, viewModel = viewModel)
+            }
+            composable(route = Route.AddContractScreen.route) {
+                 val viewModel: AddContractViewModel = hiltViewModel()
+                 AddContractScreen(navController = navController, viewModel = viewModel)
             }
         }
     }

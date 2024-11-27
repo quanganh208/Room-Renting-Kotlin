@@ -1,9 +1,9 @@
 package com.itptit.roomrenting.presentation.home.addasset
 
+import FullScreenLoadingModal
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,9 +12,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,17 +26,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
     var text by remember { mutableStateOf("") } // Quản lý giá trị nhập
@@ -93,9 +89,20 @@ fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddAssetScreen(navController: NavController) {
+fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+    val uploadState by viewModel.uploadState.collectAsState()
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        selectedImageUri = uri
+    }
+
+    FullScreenLoadingModal(isVisible = uploadState is AddAssetViewModel.UploadState.Loading)
     Scaffold(
-        topBar = { AddAssetTopBar(navController) }
+        topBar = { AddAssetTopBar(navController) },
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -105,62 +112,78 @@ fun AddAssetScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Tên tài sản
+            // Input field for the asset name
             InputField(title = "Tên tài sản*", hint = "Ví dụ: Tủ lạnh")
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Chọn ảnh
-            ImagePickerSection()
+            // Image picker section with the updated function
+            ImagePickerSection(
+                selectedImageUri = selectedImageUri,
+                onPickImage = { launcher.launch("image/*") }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Spacer để đẩy các nút xuống dưới
+            // Rest of the UI components
             Spacer(modifier = Modifier.weight(1f))
 
-            // Nút Đóng và Thêm tài sản nằm ở dưới đáy
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp), // Tạo khoảng cách với viền hai bên và viền dưới
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Button(
-                    onClick = { /* Xử lý đóng */ },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp), // Chiều cao của nút
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.weight(1f).height(48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
-                    shape = RoundedCornerShape(4.dp) // Ít bo góc hơn
+                    shape = RoundedCornerShape(4.dp)
                 ) {
                     Text(text = "Đóng", color = Color.Black)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = { /* Xử lý thêm tài sản */ },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp), // Chiều cao của nút
+                    onClick = { viewModel.uploadImageToFirebase(selectedImageUri) },
+                    modifier = Modifier.weight(1f).height(48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                    shape = RoundedCornerShape(4.dp) // Ít bo góc hơn
+                    shape = RoundedCornerShape(4.dp)
                 ) {
                     Text(text = "+ Thêm tài sản", color = Color.White)
                 }
             }
+
+            when (uploadState) {
+                is AddAssetViewModel.UploadState.Loading -> {
+                    Text(
+                        text = "Đang tải ảnh lên...",
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = Color.Gray
+                    )
+                }
+                is AddAssetViewModel.UploadState.Success -> {
+                    Text(
+                        text = "Tải lên thành công: ${(uploadState as AddAssetViewModel.UploadState.Success).downloadUrl}",
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = Color.Green
+                    )
+                }
+                is AddAssetViewModel.UploadState.Error -> {
+                    Text(
+                        text = "Lỗi: ${(uploadState as AddAssetViewModel.UploadState.Error).message}",
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = Color.Red
+                    )
+                }
+                else -> {}
+            }
         }
     }
 }
+
+
 @Composable
-fun ImagePickerSection() {
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-
-    // Launcher để chọn ảnh từ thư viện
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        selectedImageUri = uri
-    }
-
+fun ImagePickerSection(selectedImageUri: Uri?, onPickImage: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -175,13 +198,13 @@ fun ImagePickerSection() {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        // Hiển thị ảnh đã chọn hoặc nút chọn ảnh
+        // Display the selected image or show the placeholder
         Box(
             modifier = Modifier
-                .size(240.dp) // Kích thước hộp chứa ảnh
+                .size(240.dp) // Box size
                 .background(Color(0xFFF5F5F5), shape = RoundedCornerShape(8.dp))
                 .border(1.dp, Color.LightGray, shape = RoundedCornerShape(8.dp))
-                .clickable { launcher.launch("image/*") },
+                .clickable { onPickImage() }, // Trigger the image picker
             contentAlignment = Alignment.Center
         ) {
             if (selectedImageUri != null) {
@@ -190,8 +213,8 @@ fun ImagePickerSection() {
                     contentDescription = "Ảnh đã chọn",
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(8.dp)), // Làm tròn góc cho ảnh
-                    contentScale = ContentScale.Crop // Scale ảnh để không bị thừa khoảng trắng
+                        .clip(RoundedCornerShape(8.dp)), // Rounded corners for the image
+                    contentScale = ContentScale.Crop // Scale the image
                 )
             } else {
                 Text(
@@ -227,7 +250,7 @@ fun AddAssetTopBar(navController: NavController) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back Icon",
                     tint = Color.Black
                 )

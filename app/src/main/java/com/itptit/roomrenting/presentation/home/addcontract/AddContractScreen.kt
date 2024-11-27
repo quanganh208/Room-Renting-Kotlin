@@ -1,17 +1,9 @@
-package com.example.nhatro.presentation.home.addcontract
+package com.itptit.roomrenting.presentation.home.addcontract
+
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import android.os.Bundle
 import android.provider.OpenableColumns
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,64 +12,46 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.domain.model.FileInfo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
     var text by remember { mutableStateOf("") } // Quản lý giá trị nhập
@@ -133,14 +107,19 @@ fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
         }
     }
 }
+
 @Composable
-fun AddContractScreen(navController: NavController) {
+fun AddContractScreen(navController: NavController, viewModel: AddContractViewModel) {
     var fileInfo by remember { mutableStateOf<FileInfo?>(null) }
+    val uploadState by viewModel.uploadState.collectAsState()
 
     Scaffold(
         topBar = {
             AddContractTopBar(navController = navController)
-        }
+        },
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -202,6 +181,27 @@ fun AddContractScreen(navController: NavController) {
                 }
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Hiển thị trạng thái tải file
+            when (uploadState) {
+                is AddContractViewModel.UploadState.Loading -> {
+                    Text(text = "Đang tải file lên...", color = Color.Gray)
+                }
+                is AddContractViewModel.UploadState.Success -> {
+                    Text(
+                        text = "Tải lên thành công: ${(uploadState as AddContractViewModel.UploadState.Success).downloadUrl}",
+                        color = Color.Green
+                    )
+                }
+                is AddContractViewModel.UploadState.Error -> {
+                    Text(
+                        text = "Lỗi: ${(uploadState as AddContractViewModel.UploadState.Error).message}",
+                        color = Color.Red
+                    )
+                }
+                else -> {}
+            }
 
             Spacer(modifier = Modifier.weight(1f)) // Đẩy các nút xuống cuối màn hình
 
@@ -224,7 +224,7 @@ fun AddContractScreen(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = { /* Xử lý lưu hợp đồng */ },
+                    onClick = { viewModel.uploadFileToFirebase(fileInfo) },
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp),
@@ -243,36 +243,42 @@ fun FileUploadSection(onFileUploaded: (FileInfo) -> Unit) {
     val context = LocalContext.current
     var errorMessage by remember { mutableStateOf<String?>(null) } // Lưu thông báo lỗi
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            val contentResolver = context.contentResolver
-            val mimeType = contentResolver.getType(uri)
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                val contentResolver = context.contentResolver
+                val mimeType = contentResolver.getType(uri)
 
-            // Các định dạng file được hỗ trợ
-            val supportedTypes = listOf("application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-
-            if (mimeType in supportedTypes) {
-                val cursor = contentResolver.query(uri, null, null, null, null)
-                val fileName = if (cursor != null && cursor.moveToFirst()) {
-                    val nameIndex = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
-                    cursor.getString(nameIndex)
-                } else {
-                    "File không xác định"
-                }
-                cursor?.close()
-
-                // Tạo đối tượng FileInfo
-                val fileInfo = FileInfo(
-                    fileName = fileName,
-                    fileSize = 87.59 // Có thể thay đổi theo kích thước thực tế
+                // Các định dạng file được hỗ trợ
+                val supportedTypes = listOf(
+                    "application/pdf",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 )
-                onFileUploaded(fileInfo)
-                errorMessage = null // Xóa thông báo lỗi khi file hợp lệ
-            } else {
-                errorMessage = "Định dạng file không được hỗ trợ"
+
+                if (mimeType in supportedTypes) {
+                    val cursor = contentResolver.query(uri, null, null, null, null)
+                    val fileName = if (cursor != null && cursor.moveToFirst()) {
+                        val nameIndex = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
+                        cursor.getString(nameIndex)
+                    } else {
+                        "File không xác định"
+                    }
+                    cursor?.close()
+
+                    // Tạo đối tượng FileInfo
+                    val fileInfo = FileInfo(
+                        fileName = fileName,
+                        fileSize = 87.59, // Replace with actual size calculation
+                        uri = uri
+                    )
+                    onFileUploaded(fileInfo)
+                    errorMessage = null // Xóa thông báo lỗi khi file hợp lệ
+                } else {
+                    errorMessage = "Định dạng file không được hỗ trợ"
+                }
             }
         }
-    }
 
     Column(
         modifier = Modifier
@@ -320,12 +326,6 @@ fun FileUploadSection(onFileUploaded: (FileInfo) -> Unit) {
         }
     }
 }
-
-data class FileInfo(
-    val fileName: String,
-    val fileSize: Double
-)
-
 
 @Composable
 fun AddContractTopBar(navController: NavController) {
