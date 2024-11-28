@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -95,13 +97,35 @@ fun RentalHouseScreen(
                 .fillMaxSize()
                 .padding(WindowInsets.safeDrawing.asPaddingValues())
         ) {
-            // Header
-            Text(
-                text = if (houseId != "0") "Cập nhật nhà cho thuê" else "Thêm mới nhà cho thuê",
-                fontFamily = FontFamily(Font(R.font.roboto_bold)),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-            )
+            // Header with Back Button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 2.dp) // Giảm khoảng trống phía trên
+            ) {
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.size(30.dp) // Tăng kích thước icon
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.back_regis_icon_v2),
+                        contentDescription = "Quay lại",
+                        modifier = Modifier.size(30.dp) // Tăng kích thước icon
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp)) // Khoảng cách giữa icon và tiêu đề
+
+                Text(
+                    text = if (houseId != "0") "Cập nhật nhà cho thuê" else "Thêm mới nhà cho thuê",
+                    fontFamily = FontFamily(Font(R.font.roboto_bold)),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.CenterVertically) // Căn chỉnh tiêu đề với icon
+                )
+            }
+
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
