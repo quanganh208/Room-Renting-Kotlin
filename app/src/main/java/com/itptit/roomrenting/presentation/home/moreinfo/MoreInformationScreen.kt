@@ -26,6 +26,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.gson.Gson
+import com.itptit.roomrenting.domain.model.auth.login.Data
 import com.itptit.roomrenting.util.Constants
 
 @Composable
@@ -109,13 +111,22 @@ fun MoreInformationScreen(onLogoutSuccess: () -> Unit) {
 
 @Composable
 fun HeaderSection(modifier: Modifier = Modifier) {
+    @Composable
+    fun getName(): String? {
+        val context = LocalContext.current
+        val sharedPreferences =
+            context.getSharedPreferences(Constants.LOGIN_PREFS, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val dataJson = sharedPreferences.getString(Constants.USER_DATA, null)
+        return gson.fromJson(dataJson, Data::class.java)?.user?.fullName
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
             .padding(vertical = 16.dp)
     ) {
-        // Dòng đầu tiên: Avatar và lời chào
         Row(
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -141,7 +152,7 @@ fun HeaderSection(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Xin chào! Sonktx",
+                        text = "Xin chào! ${getName()}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black

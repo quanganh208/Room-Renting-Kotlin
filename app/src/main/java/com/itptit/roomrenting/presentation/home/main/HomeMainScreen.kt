@@ -142,7 +142,7 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                     title = "Quản lý phòng",
                     description = "Theo dõi và quản lý danh sách phòng, trạng thái sử dụng, và cập nhật thông tin phòng trọ một cách dễ dàng.",
                     onClick = {
-                        navController.navigate(Route.RoomScreen.route)
+                        navController.navigate("${Route.RoomScreen.route}/${selectedHouse!!.id}/${selectedHouse!!.name}")
                     }
                 )
 

@@ -134,6 +134,8 @@ fun TabContent(text: String) {
 @Composable
 fun RoomScreen(
     navController: NavController,
+    houseId: Int,
+    houseName: String
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -179,7 +181,7 @@ fun RoomScreen(
                             fontWeight = FontWeight.Black,
                             fontSize = 15.sp
                         )
-                        Text(text = "Nhà trọ ĐOM ĐÓM", fontSize = 15.sp)
+                        Text(text = "Nhà trọ ${houseName}", fontSize = 15.sp)
                     }
                 }
 

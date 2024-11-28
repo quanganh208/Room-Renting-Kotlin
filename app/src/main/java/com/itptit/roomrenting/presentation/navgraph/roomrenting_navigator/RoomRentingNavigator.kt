@@ -123,13 +123,15 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 ContractScreen(navController = navController)
             }
 
-            composable(route = Route.RoomScreen.route) {
-                OnBackClickStateSaver(navController)
+            composable(route = "${Route.RoomScreen.route}/{houseId}/{houseName}") { backStackEntry ->
+                val houseId = backStackEntry.arguments?.getString("houseId") ?: "0"
+                val houseName = backStackEntry.arguments?.getString("houseName")
                 RoomScreen(
-                    navController = navController
+                    navController = navController,
+                    houseId = houseId.toInt(),
+                    houseName = houseName ?: ""
                 )
             }
-
             composable(route = Route.CreateRoomScreen.route) {
                 OnBackClickStateSaver(navController)
                 CreateRoomScreen(
