@@ -1,7 +1,5 @@
 package com.itptit.roomrenting.presentation.room
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,11 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.itptit.roomrenting.R
 import com.itptit.roomrenting.domain.model.room.Data
+import com.itptit.roomrenting.util.Format
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Phong(room: Data) {
@@ -264,9 +260,9 @@ fun Phong(room: Data) {
                     horizontalArrangement = Arrangement.Absolute.Left,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Ghi chú:", fontSize = 12.sp, color = Color(0xff959595))
+                    Text(text = "Mô tả:", fontSize = 14.sp, color = Color(0xff959595))
                     Spacer(Modifier.width(10.dp))
-                    Text(text = room.description, fontSize = 12.sp)
+                    Text(text = room.description, fontSize = 14.sp)
                 }
             }
 
@@ -284,13 +280,9 @@ fun Phong(room: Data) {
                 horizontalArrangement = Arrangement.Absolute.Left,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Cập nhật gần nhất:", fontSize = 12.sp, color = Color(0xff959595))
+                Text(text = "Cập nhật gần nhất:", fontSize = 14.sp, color = Color(0xff959595))
                 Spacer(Modifier.width(10.dp))
-                val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-                val dateTime = OffsetDateTime.parse(room.updatedAt, formatter)
-                val outputFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy")
-                val formattedDateTime = dateTime.format(outputFormatter)
-                Text(text = formattedDateTime, fontSize = 12.sp)
+                Text(text = Format().time(room.updatedAt), fontSize = 14.sp)
             }
         }
     }

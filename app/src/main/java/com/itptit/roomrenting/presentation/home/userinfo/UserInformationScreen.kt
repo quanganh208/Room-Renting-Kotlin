@@ -1,53 +1,67 @@
 package com.itptit.roomrenting.presentation.home.userinfo
 
-import androidx.navigation.NavController
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.google.gson.Gson
+import com.itptit.roomrenting.domain.model.auth.login.Data
+import com.itptit.roomrenting.util.Constants
+import com.itptit.roomrenting.util.Format
 
 @Composable
-fun UserInformationScreen(navController: NavController) {
+fun UserInformationScreen(navController: NavController, onLogoutSuccess: () -> Unit) {
+    val context = LocalContext.current
+    val sharedPreferences =
+        context.getSharedPreferences(Constants.LOGIN_PREFS, Context.MODE_PRIVATE)
+    val gson = Gson()
+    val dataJson = sharedPreferences.getString(Constants.USER_DATA, null)
+    val user = gson.fromJson(dataJson, Data::class.java)?.user
+    val name = user?.fullName ?: "Không có"
+    val phone = user?.phone ?: "Không có"
+    val email = user?.email ?: "Không có"
+    val joinDate = user?.createdAt?.let { Format().time(it) } ?: "Không có"
+
     Scaffold(
+        modifier = Modifier.fillMaxSize().padding(WindowInsets.safeDrawing.asPaddingValues()),
         topBar = { MoreInformationTopBar(navController) },
         content = { paddingValues ->
             Column(
@@ -79,8 +93,8 @@ fun UserInformationScreen(navController: NavController) {
                 // Mã tài khoản khách hàng
                 UserInfoRow(
                     label = "Mã tài khoản khách hàng",
-                    value = "#2020W00008518",
-                    valueColor = Color(0xFF2E7D32), // Màu xanh lá đậm
+                    value = "#${user?.id.toString()}",
+                    valueColor = Color(0xFF2E7D32),
                     isUnderlined = true
                 )
 
@@ -90,16 +104,15 @@ fun UserInformationScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Thông tin cá nhân
-                UserInfoRow(label = "Tên", value = "Sonktx")
-                UserInfoRow(label = "Số điện thoại", value = "0374-829-059")
-                UserInfoRow(label = "Email", value = "không có")
-                UserInfoRow(label = "Ngày tham gia", value = "20:42:31, 14/11/2024")
-                UserInfoRow(label = "Đăng nhập lần đầu tiên", value = "không có")
+                UserInfoRow(label = "Tên", value = name)
+                UserInfoRow(label = "Số điện thoại", value = phone)
+                UserInfoRow(label = "Email", value = email)
+                UserInfoRow(label = "Ngày tham gia", value = joinDate)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Nút đăng xuất
-                LogoutButton()
+                LogoutButton(onLogoutSuccess)
 
             }
         }
@@ -108,9 +121,20 @@ fun UserInformationScreen(navController: NavController) {
 
 // Nút đăng xuất tài khoản
 @Composable
-fun LogoutButton() {
+fun LogoutButton(onLogoutSuccess: () -> Unit) {
+    val context = LocalContext.current
     Button(
-        onClick = { /* Xử lý đăng xuất */ },
+        onClick = {val sharedPreferences = context.getSharedPreferences(
+            Constants.LOGIN_PREFS,
+            Context.MODE_PRIVATE
+        )
+            sharedPreferences
+                .edit()
+                .apply {
+                    remove(Constants.USER_DATA)
+                    apply()
+                }
+            onLogoutSuccess() },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
@@ -121,12 +145,12 @@ fun LogoutButton() {
             imageVector = Icons.AutoMirrored.Filled.ExitToApp, // Icon mũi tên
             contentDescription = "Đăng xuất",
             modifier = Modifier.size(20.dp),
-            tint = Color.Black // Màu của icon
+            tint = Color.Red // Màu của icon
         )
         Spacer(modifier = Modifier.width(8.dp)) // Khoảng cách giữa icon và văn bản
         Text(
             text = "Đăng xuất tài khoản",
-            color = Color.Black,
+            color = Color.Red,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
         )
@@ -226,7 +250,7 @@ fun MoreInformationTopBar(navController: NavController) {
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back Icon",
                     tint = Color.Black // Màu icon là đen
                 )

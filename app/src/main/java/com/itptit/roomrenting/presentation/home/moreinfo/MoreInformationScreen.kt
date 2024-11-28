@@ -26,12 +26,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.itptit.roomrenting.domain.model.auth.login.Data
+import com.itptit.roomrenting.presentation.navgraph.Route
 import com.itptit.roomrenting.util.Constants
 
 @Composable
-fun MoreInformationScreen(onLogoutSuccess: () -> Unit) {
+fun MoreInformationScreen(onLogoutSuccess: () -> Unit, navController: NavController) {
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -44,7 +46,8 @@ fun MoreInformationScreen(onLogoutSuccess: () -> Unit) {
             HeaderSection(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(16.dp)),
+                navController = navController
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -110,7 +113,7 @@ fun MoreInformationScreen(onLogoutSuccess: () -> Unit) {
 }
 
 @Composable
-fun HeaderSection(modifier: Modifier = Modifier) {
+fun HeaderSection(modifier: Modifier = Modifier, navController: NavController) {
     @Composable
     fun getName(): String? {
         val context = LocalContext.current
@@ -119,6 +122,16 @@ fun HeaderSection(modifier: Modifier = Modifier) {
         val gson = Gson()
         val dataJson = sharedPreferences.getString(Constants.USER_DATA, null)
         return gson.fromJson(dataJson, Data::class.java)?.user?.fullName
+    }
+
+    @Composable
+    fun getId(): String {
+        val context = LocalContext.current
+        val sharedPreferences =
+            context.getSharedPreferences(Constants.LOGIN_PREFS, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val dataJson = sharedPreferences.getString(Constants.USER_DATA, null)
+        return gson.fromJson(dataJson, Data::class.java)?.user?.id.toString()
     }
 
     Column(
@@ -133,6 +146,11 @@ fun HeaderSection(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
+                .clickable(
+                    onClick = {
+                        navController.navigate(Route.UserInformationScreen.route)
+                    }
+                )
         ) {
             Row(verticalAlignment = Alignment.Top) {
                 Box(
@@ -213,7 +231,7 @@ fun HeaderSection(modifier: Modifier = Modifier) {
                     color = Color.Black
                 )
                 Text(
-                    text = "#2020W00008518",
+                    text = "#${getId()}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF4CAF50),

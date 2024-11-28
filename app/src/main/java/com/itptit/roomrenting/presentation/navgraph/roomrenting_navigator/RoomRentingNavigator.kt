@@ -1,7 +1,9 @@
 package com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator
 
+import android.os.Build
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseViewModel
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -26,6 +28,7 @@ import com.itptit.roomrenting.presentation.home.main.HomeScreen
 import com.itptit.roomrenting.presentation.home.main.HomeViewModel
 import com.itptit.roomrenting.presentation.home.moreinfo.MoreInformationScreen
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
+import com.itptit.roomrenting.presentation.home.userinfo.UserInformationScreen
 import com.itptit.roomrenting.presentation.navgraph.Route
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.BottomNavigationItem
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.RoomRentingBottomNavigation
@@ -33,6 +36,7 @@ import com.itptit.roomrenting.presentation.other.AssetScreen
 import com.itptit.roomrenting.presentation.other.ContractScreen
 import com.itptit.roomrenting.presentation.other.InvoiceScreen
 import com.itptit.roomrenting.presentation.room.CreateRoomScreen
+import com.itptit.roomrenting.presentation.room.CreateRoomViewModel
 import com.itptit.roomrenting.presentation.room.RoomScreen
 import com.itptit.roomrenting.presentation.room.RoomViewModel
 import com.itptit.roomrenting.presentation.service.AddServiceScreen
@@ -102,7 +106,8 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 MoreInformationScreen(
                     onLogoutSuccess = {
                         navigateToLogin(sharedNavController)
-                    }
+                    },
+                    navController = navController
                 )
             }
 
@@ -135,12 +140,16 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                     viewModel = viewModel
                 )
             }
-            composable(route = Route.CreateRoomScreen.route) {
+            composable(route = "${Route.CreateRoomScreen.route}/{houseId}") { backStackEntry ->
+                val houseId = backStackEntry.arguments?.getString("houseId")
+                val viewModel: CreateRoomViewModel = hiltViewModel()
                 OnBackClickStateSaver(navController)
                 CreateRoomScreen(
                     onBack = {
                         navController.popBackStack()
-                    }
+                    },
+                    houseId = houseId ?: "",
+                    viewModel = viewModel
                 )
             }
 
@@ -168,6 +177,15 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
             composable(route = Route.AddressLocationScreen.route) {
                 val viewModel: AddressLocationViewModel = hiltViewModel()
                 AddressLocationScreen(navController = navController, viewModel = viewModel)
+            }
+
+            composable(route = Route.UserInformationScreen.route) {
+                UserInformationScreen(
+                    navController = navController,
+                    onLogoutSuccess = {
+                        navigateToLogin(sharedNavController)
+                    },
+                )
             }
         }
     }

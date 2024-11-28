@@ -121,4 +121,6 @@ dependencies {
 
     //Firebase Storage
     implementation 'com.google.firebase:firebase-storage:ktx'
+
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.3.1'
 }

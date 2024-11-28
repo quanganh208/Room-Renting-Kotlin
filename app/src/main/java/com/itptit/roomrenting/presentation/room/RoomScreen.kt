@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -52,7 +51,27 @@ import com.itptit.roomrenting.presentation.navgraph.Route
 
 
 @Composable
-fun LazyPhong( viewModel: RoomViewModel) {
+fun RoomRented(viewModel: RoomViewModel) {
+    val rooms = viewModel.rooms.collectAsState().value.data.filter { it.isCurrentlyRented }
+    Box(
+        modifier = Modifier
+            .background(color = Color(0xffe6f2ee))
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        ) {
+            items(rooms.size) { index ->
+                Phong(room = rooms[index])
+                Spacer(modifier = Modifier.height(15.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun AllRoomRent(viewModel: RoomViewModel) {
     val rooms = viewModel.rooms.collectAsState().value.data
     Box(
         modifier = Modifier
@@ -73,7 +92,7 @@ fun LazyPhong( viewModel: RoomViewModel) {
 
 @Composable
 fun TabNavigationExample(viewModel: RoomViewModel) {
-    val tabs = listOf("Đã cho thuê", "Toàn bộ phòng")
+    val tabs = listOf("Toàn bộ phòng", "Đã cho thuê")
     val selectedTab = remember { mutableIntStateOf(0) }
 
     Scaffold(
@@ -119,23 +138,12 @@ fun TabNavigationExample(viewModel: RoomViewModel) {
         ) {
 
             when (selectedTab.intValue) {
-                0 -> LazyPhong(viewModel = viewModel)
-                1 -> TabContent(text = "Nội dung: Toàn bộ phòng")
+                0 -> AllRoomRent(viewModel = viewModel)
+                1 -> RoomRented(viewModel = viewModel)
             }
         }
     }
 }
-
-@Composable
-fun TabContent(text: String) {
-    Text(
-        text = text,
-        fontSize = 18.sp,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxSize()
-    )
-}
-
 
 @Composable
 fun RoomScreen(
@@ -219,7 +227,7 @@ fun RoomScreen(
 
         FloatingActionButton(
             onClick = {
-                navController.navigate(Route.CreateRoomScreen.route)
+                navController.navigate("${Route.CreateRoomScreen.route}/$houseId")
             },
             modifier = Modifier
                 .padding(16.dp)

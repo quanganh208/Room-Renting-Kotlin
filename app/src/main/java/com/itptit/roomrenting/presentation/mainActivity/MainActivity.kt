@@ -18,6 +18,7 @@ import com.itptit.roomrenting.data.remote.ApiClient
 import com.itptit.roomrenting.presentation.navgraph.NavGraph
 import com.itptit.roomrenting.ui.theme.RoomRentingAppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidThreeTen.init(this)
         ApiClient.init(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         installSplashScreen().apply {
