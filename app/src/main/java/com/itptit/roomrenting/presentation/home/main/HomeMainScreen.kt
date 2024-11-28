@@ -146,7 +146,10 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                 FeatureItemStyled(
                     icon = Icons.AutoMirrored.Filled.List,
                     title = "Quản lý hóa đơn",
-                    description = "Quản lý hóa đơn tiền thuê, điện, nước và các khoản phí khác của từng khách hàng."
+                    description = "Quản lý hóa đơn tiền thuê, điện, nước và các khoản phí khác của từng khách hàng.",
+                    onClick = {
+                        navController.navigate(Route.InvoiceScreen.route)
+                    }
                 )
 
                 FeatureItemStyled(
@@ -161,13 +164,19 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                 FeatureItemStyled(
                     icon = Icons.AutoMirrored.Filled.ArrowForward,
                     title = "Quản lý hợp đồng",
-                    description = "Quản lý thông tin hợp đồng của từng khách thuê, bao gồm ngày bắt đầu, ngày kết thúc, và các điều khoản chi tiết."
+                    description = "Quản lý thông tin hợp đồng của từng khách thuê, bao gồm ngày bắt đầu, ngày kết thúc, và các điều khoản chi tiết.",
+                    onClick = {
+                        navController.navigate(Route.ContractScreen.route)
+                    }
                 )
 
                 FeatureItemStyled(
                     icon = Icons.Default.Search,
                     title = "Quản lý tài sản",
-                    description = "Theo dõi và kiểm kê tài sản của nhà trọ, bao gồm nội thất, thiết bị, và các vật dụng khác."
+                    description = "Theo dõi và kiểm kê tài sản của nhà trọ, bao gồm nội thất, thiết bị, và các vật dụng khác.",
+                    onClick = {
+                        navController.navigate(Route.AssetScreen.route)
+                    }
                 )
             }
         }

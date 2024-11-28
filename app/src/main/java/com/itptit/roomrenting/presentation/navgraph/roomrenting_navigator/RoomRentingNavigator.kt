@@ -28,6 +28,9 @@ import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
 import com.itptit.roomrenting.presentation.navgraph.Route
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.BottomNavigationItem
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.components.RoomRentingBottomNavigation
+import com.itptit.roomrenting.presentation.other.AssetScreen
+import com.itptit.roomrenting.presentation.other.ContractScreen
+import com.itptit.roomrenting.presentation.other.InvoiceScreen
 import com.itptit.roomrenting.presentation.service.AddServiceScreen
 import com.itptit.roomrenting.presentation.service.ServiceScreen
 
@@ -112,6 +115,20 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 AddServiceScreen(onBack = {
                     navController.popBackStack()
                 })
+            }
+            composable(route = Route.ContractScreen.route) {
+                OnBackClickStateSaver(navController)
+                ContractScreen(navController = navController)
+            }
+
+            composable(route = Route.InvoiceScreen.route) {
+                OnBackClickStateSaver(navController)
+                InvoiceScreen(navController = navController)
+            }
+
+            composable(route = Route.AssetScreen.route) {
+                OnBackClickStateSaver(navController)
+                AssetScreen(navController = navController)
             }
 
             composable(route = Route.RentalHouseScreen.route) {

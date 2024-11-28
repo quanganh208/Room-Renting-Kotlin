@@ -28,6 +28,12 @@ sealed class Route(
 
     object AddServiceScreen : Route(route = "addServiceScreen")
 
+    object ContractScreen: Route(route = "contractScreen")
+
+    object InvoiceScreen: Route(route = "invoiceScreen")
+
+    object AssetScreen: Route(route = "assetScreen")
+
     object AppStartNavigation : Route(route = "appStartNavigation")
 
     object AuthNavigation : Route(route = "authNavigation")
