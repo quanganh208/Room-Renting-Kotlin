@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -57,7 +58,7 @@ fun Phong(room: Data) {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .height(220.dp)
+//            .height(220.dp)
             .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
@@ -122,14 +123,15 @@ fun Phong(room: Data) {
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(60.dp)
+                    .height(70.dp)
                     .border(
                         BorderStroke(1.dp, color = Color(0xffd3d3d3)),
                         shape = RoundedCornerShape(16.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(modifier = Modifier.padding(3.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -147,7 +149,7 @@ fun Phong(room: Data) {
                                 shape = RoundedCornerShape(16.dp)
                             )
                         ) {
-                            Row(
+                            Row(modifier = Modifier.padding(3.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -176,6 +178,7 @@ fun Phong(room: Data) {
                                 color = Color(0xffeeeeee),
                                 shape = RoundedCornerShape(16.dp)
                             )
+                                .padding(3.dp)
                         ) {
                             Row(
                                 horizontalArrangement = Arrangement.Center,
@@ -234,6 +237,40 @@ fun Phong(room: Data) {
                     )
                 }
             }
+
+            Spacer(Modifier.height(10.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .border(BorderStroke(1.dp, color = Color(0xffebebeb)))
+            )
+
+            Row(modifier = Modifier.fillMaxWidth().height(40.dp),
+                horizontalArrangement = Arrangement.Absolute.Left,
+                verticalAlignment = Alignment.CenterVertically){
+                Text(text = "Ghi chú:", fontSize = 12.sp, color = Color(0xff959595))
+                Spacer(Modifier.width(10.dp))
+                Text(text = "Chèn string", fontSize = 12.sp)
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .border(BorderStroke(1.dp, color = Color(0xffebebeb)))
+            )
+
+            Row(modifier = Modifier.fillMaxWidth().height(40.dp),
+                horizontalArrangement = Arrangement.Absolute.Left,
+                verticalAlignment = Alignment.CenterVertically){
+                Text(text = "Cập nhật gần nhất:", fontSize = 12.sp, color = Color(0xff959595))
+                Spacer(Modifier.width(10.dp))
+                Text(text = "Chèn string", fontSize = 12.sp )
+            }
+
+
         }
     }
 
