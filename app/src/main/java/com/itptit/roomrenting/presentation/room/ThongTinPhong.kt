@@ -33,9 +33,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.domain.model.room.Data
 
 @Composable
-fun In4() {
+fun In4(room: Data) {
     Column {
         Row(
             modifier = Modifier
@@ -58,7 +59,7 @@ fun In4() {
             }
             Spacer(Modifier.width(10.dp))
             Column {
-                Text(text = "Tên Phòng", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Text(text = "Phòng ${room.name}", fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 Text(text = "Menu thao tác phòng", fontSize = 20.sp)
             }
         }

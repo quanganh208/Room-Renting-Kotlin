@@ -39,18 +39,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.domain.model.room.Data
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Phong(tien: Double) {
+fun Phong(room: Data) {
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     val isSheetOpen = remember { mutableStateOf(false) }
 
     Button(
         onClick = {
-            coroutineScope.launch{
+            coroutineScope.launch {
                 sheetState.show()
             }
         },
@@ -88,11 +89,11 @@ fun Phong(tien: Double) {
                         )
                     }
                     Spacer(Modifier.width(10.dp))
-                    Text(text = "Phòng 1", fontSize = 18.sp, color = Color.Black)
+                    Text(text = "Phòng ${room.name}", fontSize = 18.sp, color = Color.Black)
                 }
                 IconButton(
                     onClick = {
-                        coroutineScope.launch{
+                        coroutineScope.launch {
                             sheetState.show()
                         }
                     },
@@ -109,11 +110,12 @@ fun Phong(tien: Double) {
                 }
             }
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .border(BorderStroke(1.dp, color = Color(0xffebebeb)))){
-            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .border(BorderStroke(1.dp, color = Color(0xffebebeb)))
+            )
 
             Spacer(Modifier.height(10.dp))
 
@@ -128,8 +130,10 @@ fun Phong(tien: Double) {
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Row(horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Icon(Icons.Default.Info, contentDescription = "Info")
                         Text(text = "Trạng thái", fontSize = 13.sp, color = Color.Black)
                     }
@@ -151,11 +155,15 @@ fun Phong(tien: Double) {
                                     modifier = Modifier
                                         .size(10.dp)
                                         .clip(CircleShape)
-                                        .background(color = Color(0xffe56307))
+                                        .background(
+                                            color = if (room.isCurrentlyRented) Color(0xFF03A9F4) else Color(
+                                                0xffe56307
+                                            )
+                                        )
                                 ) { }
                                 Spacer(Modifier.width(3.dp))
                                 Text(
-                                    text = "Đang trống",
+                                    text = if (room.isCurrentlyRented) "Đã cho thuê" else "Đang trống",
                                     fontSize = 13.sp,
                                     color = Color.Black,
                                     fontWeight = FontWeight.W500
@@ -201,8 +209,8 @@ fun Phong(tien: Double) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text(text = "Giá thuê", color = Color(0xff959595))
-                    Text(text = "$tien đ", fontSize = 20.sp)
+                    Text(text = "Có thể ở tối đa", color = Color(0xff959595))
+                    Text(text = "${room.capacity} người", fontSize = 20.sp)
                 }
                 Button(
                     modifier = Modifier
@@ -238,9 +246,11 @@ fun Phong(tien: Double) {
             },
             sheetState = sheetState
         ) {
-            Box(modifier = Modifier
-                .background(color = Color(0xfffefefe))){
-                In4()
+            Box(
+                modifier = Modifier
+                    .background(color = Color(0xfffefefe))
+            ) {
+                In4(room)
             }
         }
     }

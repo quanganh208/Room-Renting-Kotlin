@@ -31,6 +31,8 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -45,28 +47,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 import com.itptit.roomrenting.presentation.navgraph.Route
 
 
 @Composable
-fun LazyPhong(){
-    Box(modifier = Modifier
-        .background(color = Color(0xffe6f2ee))) {
+fun LazyPhong( viewModel: RoomViewModel) {
+    val rooms = viewModel.rooms.collectAsState().value.data
+    Box(
+        modifier = Modifier
+            .background(color = Color(0xffe6f2ee))
+    ) {
         LazyColumn(
             modifier = Modifier
-                .padding(10.dp)
                 .fillMaxSize()
+                .padding(8.dp)
         ) {
-            items(6) {
-                Phong(123.123)
-                Spacer(Modifier.height(15.dp))
+            items(rooms.size) { index ->
+                Phong(room = rooms[index])
+                Spacer(modifier = Modifier.height(15.dp))
             }
         }
     }
 }
 
 @Composable
-fun TabNavigationExample() {
+fun TabNavigationExample(viewModel: RoomViewModel) {
     val tabs = listOf("Đã cho thuê", "Toàn bộ phòng")
     val selectedTab = remember { mutableIntStateOf(0) }
 
@@ -113,7 +119,7 @@ fun TabNavigationExample() {
         ) {
 
             when (selectedTab.intValue) {
-                0 -> LazyPhong()
+                0 -> LazyPhong(viewModel = viewModel)
                 1 -> TabContent(text = "Nội dung: Toàn bộ phòng")
             }
         }
@@ -135,14 +141,25 @@ fun TabContent(text: String) {
 fun RoomScreen(
     navController: NavController,
     houseId: Int,
-    houseName: String
+    houseName: String,
+    viewModel: RoomViewModel
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.getRooms(houseId.toString())
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
+        FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color.White)
-                .padding(top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding())
+                .padding(
+                    top = WindowInsets.safeDrawing
+                        .asPaddingValues()
+                        .calculateTopPadding()
+                )
         ) {
             Column(
                 Modifier
@@ -185,29 +202,37 @@ fun RoomScreen(
                     }
                 }
 
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .border(BorderStroke(1.dp, color = Color(0xffeeeeee)))){
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .border(BorderStroke(1.dp, color = Color(0xffeeeeee)))
+                ) {
 
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
-                TabNavigationExample()
+                TabNavigationExample(viewModel)
             }
 
         }
 
-        FloatingActionButton(onClick = {
-            navController.navigate(Route.CreateRoomScreen.route)
-        },
+        FloatingActionButton(
+            onClick = {
+                navController.navigate(Route.CreateRoomScreen.route)
+            },
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd)
                 .systemBarsPadding(),
             containerColor = Color(0xff019e47)
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White, modifier = Modifier.size(40.dp))
+            Icon(
+                Icons.Default.Add,
+                contentDescription = "Add",
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }

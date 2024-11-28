@@ -8,6 +8,7 @@ data class Data(
     val description: String,
     val house: House,
     val id: Int,
+    val isCurrentlyRented: Boolean,
     val name: String,
     val updatedAt: String
 )

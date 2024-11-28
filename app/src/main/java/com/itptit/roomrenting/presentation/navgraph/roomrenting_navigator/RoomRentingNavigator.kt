@@ -34,6 +34,7 @@ import com.itptit.roomrenting.presentation.other.ContractScreen
 import com.itptit.roomrenting.presentation.other.InvoiceScreen
 import com.itptit.roomrenting.presentation.room.CreateRoomScreen
 import com.itptit.roomrenting.presentation.room.RoomScreen
+import com.itptit.roomrenting.presentation.room.RoomViewModel
 import com.itptit.roomrenting.presentation.service.AddServiceScreen
 import com.itptit.roomrenting.presentation.service.ServiceScreen
 
@@ -126,10 +127,12 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
             composable(route = "${Route.RoomScreen.route}/{houseId}/{houseName}") { backStackEntry ->
                 val houseId = backStackEntry.arguments?.getString("houseId") ?: "0"
                 val houseName = backStackEntry.arguments?.getString("houseName")
+                val viewModel: RoomViewModel = hiltViewModel()
                 RoomScreen(
                     navController = navController,
                     houseId = houseId.toInt(),
-                    houseName = houseName ?: ""
+                    houseName = houseName ?: "",
+                    viewModel = viewModel
                 )
             }
             composable(route = Route.CreateRoomScreen.route) {
