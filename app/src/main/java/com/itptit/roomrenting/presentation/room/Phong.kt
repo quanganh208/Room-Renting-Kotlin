@@ -1,5 +1,7 @@
 package com.itptit.roomrenting.presentation.room
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,7 +44,10 @@ import androidx.compose.ui.unit.sp
 import com.itptit.roomrenting.R
 import com.itptit.roomrenting.domain.model.room.Data
 import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Phong(room: Data) {
@@ -130,8 +135,10 @@ fun Phong(room: Data) {
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Column(modifier = Modifier.padding(3.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.padding(3.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Row(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
@@ -149,7 +156,8 @@ fun Phong(room: Data) {
                                 shape = RoundedCornerShape(16.dp)
                             )
                         ) {
-                            Row(modifier = Modifier.padding(3.dp),
+                            Row(
+                                modifier = Modifier.padding(3.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -174,10 +182,11 @@ fun Phong(room: Data) {
                         }
 
                         Box(
-                            Modifier.background(
-                                color = Color(0xffeeeeee),
-                                shape = RoundedCornerShape(16.dp)
-                            )
+                            Modifier
+                                .background(
+                                    color = Color(0xffeeeeee),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
                                 .padding(3.dp)
                         ) {
                             Row(
@@ -247,12 +256,18 @@ fun Phong(room: Data) {
                     .border(BorderStroke(1.dp, color = Color(0xffebebeb)))
             )
 
-            Row(modifier = Modifier.fillMaxWidth().height(40.dp),
-                horizontalArrangement = Arrangement.Absolute.Left,
-                verticalAlignment = Alignment.CenterVertically){
-                Text(text = "Ghi chú:", fontSize = 12.sp, color = Color(0xff959595))
-                Spacer(Modifier.width(10.dp))
-                Text(text = "Chèn string", fontSize = 12.sp)
+            if (room.description.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
+                    horizontalArrangement = Arrangement.Absolute.Left,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Ghi chú:", fontSize = 12.sp, color = Color(0xff959595))
+                    Spacer(Modifier.width(10.dp))
+                    Text(text = room.description, fontSize = 12.sp)
+                }
             }
 
             Box(
@@ -262,15 +277,21 @@ fun Phong(room: Data) {
                     .border(BorderStroke(1.dp, color = Color(0xffebebeb)))
             )
 
-            Row(modifier = Modifier.fillMaxWidth().height(40.dp),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
                 horizontalArrangement = Arrangement.Absolute.Left,
-                verticalAlignment = Alignment.CenterVertically){
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(text = "Cập nhật gần nhất:", fontSize = 12.sp, color = Color(0xff959595))
                 Spacer(Modifier.width(10.dp))
-                Text(text = "Chèn string", fontSize = 12.sp )
+                val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                val dateTime = OffsetDateTime.parse(room.updatedAt, formatter)
+                val outputFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy")
+                val formattedDateTime = dateTime.format(outputFormatter)
+                Text(text = formattedDateTime, fontSize = 12.sp)
             }
-
-
         }
     }
 
