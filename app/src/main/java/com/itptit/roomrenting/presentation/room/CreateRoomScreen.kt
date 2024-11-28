@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.sp
 import com.itptit.roomrenting.R
 
 @Composable
-fun TaoPhong(
-    navigateToDSPhong: () -> Unit
+fun CreateRoomScreen(
+    onBack: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -70,7 +70,7 @@ fun TaoPhong(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = navigateToDSPhong,
+                    onClick = onBack,
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
@@ -173,7 +173,7 @@ fun TaoPhong(
                 .fillMaxWidth()
                 .background(Color.White)
         ) {
-            TwoButtonsRow(navigateToDSPhong)
+            TwoButtonsRow(onBack)
         }
     }
 

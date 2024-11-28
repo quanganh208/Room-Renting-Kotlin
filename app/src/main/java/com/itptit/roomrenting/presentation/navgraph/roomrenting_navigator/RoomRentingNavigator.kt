@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -31,6 +32,8 @@ import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.compon
 import com.itptit.roomrenting.presentation.other.AssetScreen
 import com.itptit.roomrenting.presentation.other.ContractScreen
 import com.itptit.roomrenting.presentation.other.InvoiceScreen
+import com.itptit.roomrenting.presentation.room.CreateRoomScreen
+import com.itptit.roomrenting.presentation.room.RoomScreen
 import com.itptit.roomrenting.presentation.service.AddServiceScreen
 import com.itptit.roomrenting.presentation.service.ServiceScreen
 
@@ -55,7 +58,6 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
         else -> 0
     }
 
-    //Hide the bottom navigation when the user is in the details screen
     val isBottomBarVisible = remember(key1 = backStackState) {
         backStackState?.destination?.route == Route.HomeScreen.route ||
                 backStackState?.destination?.route == Route.MoreInformationScreen.route
@@ -87,7 +89,7 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
         NavHost(
             navController = navController,
             startDestination = Route.HomeScreen.route,
-            Modifier.padding(bottom = bottomPadding)
+            modifier = Modifier.padding(bottom = if (isBottomBarVisible) bottomPadding else 0.dp)
         ) {
             composable(route = Route.HomeScreen.route) {
                 val viewModel: HomeViewModel = hiltViewModel()
@@ -121,6 +123,22 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 ContractScreen(navController = navController)
             }
 
+            composable(route = Route.RoomScreen.route) {
+                OnBackClickStateSaver(navController)
+                RoomScreen(
+                    navController = navController
+                )
+            }
+
+            composable(route = Route.CreateRoomScreen.route) {
+                OnBackClickStateSaver(navController)
+                CreateRoomScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
             composable(route = Route.InvoiceScreen.route) {
                 OnBackClickStateSaver(navController)
                 InvoiceScreen(navController = navController)
@@ -134,11 +152,12 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
             composable(route = "${Route.RentalHouseScreen.route}/{houseId}") { backStackEntry ->
                 val houseId = backStackEntry.arguments?.getString("houseId")
                 val viewModel: RentalHouseViewModel = hiltViewModel()
-                houseId?.let { it1 -> RentalHouseScreen(
-                    navController = navController,
-                    viewModel = viewModel,
-                    houseId = it1
-                )
+                houseId?.let { it1 ->
+                    RentalHouseScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        houseId = it1
+                    )
                 }
             }
             composable(route = Route.AddressLocationScreen.route) {

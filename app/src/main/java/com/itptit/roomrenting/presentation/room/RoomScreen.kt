@@ -43,7 +43,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.presentation.navgraph.Route
 
 
 @Composable
@@ -130,15 +132,15 @@ fun TabContent(text: String) {
 
 
 @Composable
-fun DsPhong(
-    navigateToTaoPhong:() -> Unit
+fun RoomScreen(
+    navController: NavController,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color.White)
-                .padding(WindowInsets.safeDrawing.asPaddingValues())
+                .padding(top = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding())
         ) {
             Column(
                 Modifier
@@ -154,7 +156,9 @@ fun DsPhong(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            navController.popBackStack()
+                        },
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
@@ -187,14 +191,14 @@ fun DsPhong(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
-
                 TabNavigationExample()
-
             }
 
         }
 
-        FloatingActionButton(onClick = navigateToTaoPhong,
+        FloatingActionButton(onClick = {
+            navController.navigate(Route.CreateRoomScreen.route)
+        },
             modifier = Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd)

@@ -140,7 +140,10 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                 FeatureItemStyled(
                     icon = Icons.Default.Home,
                     title = "Quản lý phòng",
-                    description = "Theo dõi và quản lý danh sách phòng, trạng thái sử dụng, và cập nhật thông tin phòng trọ một cách dễ dàng."
+                    description = "Theo dõi và quản lý danh sách phòng, trạng thái sử dụng, và cập nhật thông tin phòng trọ một cách dễ dàng.",
+                    onClick = {
+                        navController.navigate(Route.RoomScreen.route)
+                    }
                 )
 
                 FeatureItemStyled(
