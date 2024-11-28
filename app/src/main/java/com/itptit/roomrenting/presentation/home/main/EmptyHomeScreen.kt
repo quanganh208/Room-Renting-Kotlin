@@ -207,7 +207,7 @@ fun EmptyHomeScreen(navController: NavController) {
                         fontSize = 15.sp
                     )
                     Button(
-                        onClick = { navController.navigate(Route.RentalHouseScreen.route) },
+                        onClick = { navController.navigate("${Route.RentalHouseScreen.route}/0") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
