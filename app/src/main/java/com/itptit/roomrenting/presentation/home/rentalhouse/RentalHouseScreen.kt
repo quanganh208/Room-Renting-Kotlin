@@ -1,5 +1,7 @@
 package com.itptit.roomrenting.presentation.home.rentalhouse
 
+import android.net.Uri
+import android.util.Log
 import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -29,7 +31,11 @@ import com.itptit.roomrenting.R
 import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
-fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewModel) {
+fun RentalHouseScreen(
+    navController: NavController,
+    viewModel: RentalHouseViewModel,
+    houseId: String
+) {
     val hostelName by viewModel.hostelName.collectAsState()
     val floorCount by viewModel.floorCount.collectAsState()
     val address by viewModel.address.collectAsState()
@@ -42,6 +48,12 @@ fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewMo
     val focusManager = LocalFocusManager.current
     val isButtonEnabled =
         hostelName.isNotEmpty() && floorCount.isNotEmpty() && address.isNotEmpty() && province.isNotEmpty() && district.isNotEmpty() && ward.isNotEmpty()
+
+    LaunchedEffect(houseId) {
+        if (houseId != "0") {
+            viewModel.getHouseById(houseId)
+        }
+    }
 
     LaunchedEffect(result) {
         if (result.isNotEmpty()) {
@@ -85,7 +97,7 @@ fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewMo
         ) {
             // Header
             Text(
-                text = "Thêm mới nhà cho thuê",
+                text = if (houseId != "0") "Cập nhật nhà cho thuê" else "Thêm mới nhà cho thuê",
                 fontFamily = FontFamily(Font(R.font.roboto_bold)),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
@@ -171,10 +183,11 @@ fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewMo
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Thêm địa chỉ & vị trí trên bản đồ
             OutlinedButton(
-                onClick = { /* Xử lý khi người dùng nhấn nút */
-                    navController.navigate(Route.AddressLocationScreen.route)
+                onClick = {
+                    navController.navigate(
+                        Route.AddressLocationScreen.route
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
@@ -188,7 +201,7 @@ fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewMo
                         .padding(end = 8.dp)
                 )
                 Text(
-                    text = "Thêm địa chỉ & vị trí trên bản đồ",
+                    text = if (houseId != "0") "Chỉnh sửa địa chỉ" else "Chọn địa chỉ",
                     fontFamily = FontFamily(Font(R.font.roboto_bold)),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium, // Đặt font chữ đậm vừa
@@ -213,14 +226,26 @@ fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewMo
 
             Button(
                 onClick = {
-                    viewModel.createHouse(
-                        addressLine = address,
-                        city = province,
-                        district = district,
-                        floorCount = floorCount.toInt(),
-                        name = hostelName,
-                        ward = ward
-                    )
+                    if (houseId != "0") {
+                        viewModel.updateHouse(
+                            houseId = houseId,
+                            addressLine = address,
+                            city = province,
+                            district = district,
+                            floorCount = floorCount.toInt(),
+                            name = hostelName,
+                            ward = ward
+                        )
+                    } else {
+                        viewModel.createHouse(
+                            addressLine = address,
+                            city = province,
+                            district = district,
+                            floorCount = floorCount.toInt(),
+                            name = hostelName,
+                            ward = ward
+                        )
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -232,7 +257,7 @@ fun RentalHouseScreen(navController: NavController, viewModel: RentalHouseViewMo
                 shape = RoundedCornerShape(6.dp),
             ) {
                 Text(
-                    text = "Thêm mới nhà cho thuê",
+                    text = if (houseId != "0") "Cập nhật nhà trọ" else "Tạo nhà trọ ",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )

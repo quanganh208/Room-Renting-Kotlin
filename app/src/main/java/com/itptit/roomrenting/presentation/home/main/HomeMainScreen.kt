@@ -582,7 +582,7 @@ fun MenuBottomSheet(onClose: () -> Unit, navController: NavController, house: Da
                 title = "Thêm mới tòa nhà cho thuê",
                 description = "Bạn có thể thêm nhiều nhà tài sản cho thuê để quản lý.",
                 onClick = {
-                    navController.navigate(Route.RentalHouseScreen.route)
+                    navController.navigate("${Route.RentalHouseScreen.route}/0")
                 }
             )
 
@@ -590,7 +590,10 @@ fun MenuBottomSheet(onClose: () -> Unit, navController: NavController, house: Da
             MenuOptionItem(
                 icon = Icons.Default.Edit,
                 title = "Chỉnh sửa thông tin \"${house.name}\"",
-                description = "Chỉnh sửa nhà trọ hiện tại. Bao gồm tên, địa chỉ..."
+                description = "Chỉnh sửa nhà trọ hiện tại. Bao gồm tên, địa chỉ...",
+                onClick = {
+                    navController.navigate("${Route.RentalHouseScreen.route}/${house.id}")
+                }
             )
 
             // Mục "Cài đặt"

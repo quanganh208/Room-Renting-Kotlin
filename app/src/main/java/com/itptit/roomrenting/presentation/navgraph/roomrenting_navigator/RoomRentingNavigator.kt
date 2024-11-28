@@ -131,9 +131,15 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 AssetScreen(navController = navController)
             }
 
-            composable(route = Route.RentalHouseScreen.route) {
+            composable(route = "${Route.RentalHouseScreen.route}/{houseId}") { backStackEntry ->
+                val houseId = backStackEntry.arguments?.getString("houseId")
                 val viewModel: RentalHouseViewModel = hiltViewModel()
-                RentalHouseScreen(navController = navController, viewModel = viewModel)
+                houseId?.let { it1 -> RentalHouseScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    houseId = it1
+                )
+                }
             }
             composable(route = Route.AddressLocationScreen.route) {
                 val viewModel: AddressLocationViewModel = hiltViewModel()

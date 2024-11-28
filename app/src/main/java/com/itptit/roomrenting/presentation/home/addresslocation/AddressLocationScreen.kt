@@ -60,12 +60,13 @@ fun AddressLocationScreen(
     navController: NavController,
     viewModel: AddressLocationViewModel
 ) {
-    var district by remember { mutableStateOf("Chọn quận/huyện") }
-    var ward by remember { mutableStateOf("Chọn phường/xã") }
     var detailedAddress by remember { mutableStateOf("") }
+    var selectedProvince by remember { mutableStateOf("Chọn tỉnh/thành phố") }
+    var selectedDistrict by remember { mutableStateOf("Chọn quận/huyện") }
+    var selectedWard by remember { mutableStateOf("Chọn phường/xã") }
+
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
-    var selectedProvince by remember { mutableStateOf("Chọn tỉnh/thành phố") }
     val provinces by viewModel.provinces.collectAsState(initial = emptyList())
     val districts by viewModel.districts.collectAsState()
     val wards by viewModel.wards.collectAsState()
@@ -140,8 +141,8 @@ fun AddressLocationScreen(
                     selectedProvince = selectedName
                     val selectedProvinceCode = provinces.find { it.name == selectedName }?.code ?: 0
                     viewModel.getDistricts(selectedProvinceCode.toString()) // Fetch districts based on selected province code
-                    district = "Chọn quận/huyện"
-                    ward = "Chọn phường/xã"
+                    selectedDistrict = "Chọn quận/huyện"
+                    selectedWard = "Chọn phường/xã"
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -151,14 +152,14 @@ fun AddressLocationScreen(
             LabelWithAsterisk("Quận/Huyện")
             DropdownSelector(
                 label = "Quận/Huyện",
-                selectedOption = district,
+                selectedOption = selectedDistrict,
                 options = districts.districts.map { it.name },
-                onOptionSelected = { selectedDistrict ->
-                    district = selectedDistrict
+                onOptionSelected = { selected ->
+                    selectedDistrict = selected
                     val selectedDistrictCode =
-                        districts.districts.find { it.name == selectedDistrict }?.code ?: 0
+                        districts.districts.find { it.name == selected }?.code ?: 0
                     viewModel.getWards(selectedDistrictCode.toString()) // Fetch wards based on selected district code
-                    ward = "Chọn phường/xã"
+                    selectedWard = "Chọn phường/xã"
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -168,9 +169,9 @@ fun AddressLocationScreen(
             LabelWithAsterisk("Phường/Xã")
             DropdownSelector(
                 label = "Phường/Xã",
-                selectedOption = ward,
+                selectedOption = selectedWard,
                 options = wards.wards.map { it.name },
-                onOptionSelected = { ward = it },
+                onOptionSelected = { selectedWard = it },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -193,8 +194,8 @@ fun AddressLocationScreen(
                     // Truyền dữ liệu về màn hình trước đó
                     navController.previousBackStackEntry?.savedStateHandle?.set("address", detailedAddress)
                     navController.previousBackStackEntry?.savedStateHandle?.set("province", selectedProvince)
-                    navController.previousBackStackEntry?.savedStateHandle?.set("district", district)
-                    navController.previousBackStackEntry?.savedStateHandle?.set("ward", ward)
+                    navController.previousBackStackEntry?.savedStateHandle?.set("district", selectedDistrict)
+                    navController.previousBackStackEntry?.savedStateHandle?.set("ward", selectedWard)
                     navController.popBackStack()
                 },
                 modifier = Modifier

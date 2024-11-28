@@ -100,7 +100,82 @@ class RentalHouseViewModel : ViewModel() {
             _isLoading.value = false
             _result.value = "Tạo nhà trọ thất bại: ${e.localizedMessage}"
         }
-
     }
 
+    fun getHouseById(houseId: String) {
+        _isLoading.value = true
+        try {
+            ApiClient.houseService.getHouse(houseId).enqueue(object : Callback<HouseResponse> {
+                override fun onResponse(
+                    call: Call<HouseResponse>,
+                    response: Response<HouseResponse>
+                ) {
+                    _isLoading.value = false
+                    if (response.isSuccessful) {
+                        _hostelName.value = response.body()?.data?.name ?: ""
+                        _floorCount.value = response.body()?.data?.floorCount.toString()
+                        _address.value = response.body()?.data?.addressLine ?: ""
+                        _province.value = response.body()?.data?.city ?: ""
+                        _district.value = response.body()?.data?.district ?: ""
+                        _ward.value = response.body()?.data?.ward ?: ""
+                    } else {
+                        _result.value =
+                            "Lấy thông tin nhà trọ thất bại: ${if (response.code() == 400) "Sai thông tin" else "Lỗi không xác định"}"
+                    }
+                }
+
+                override fun onFailure(call: Call<HouseResponse>, t: Throwable) {
+                    _isLoading.value = false
+                    _result.value = "Lấy thông tin nhà trọ thất bại: ${t.message}"
+                }
+            })
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _result.value = "Lấy thông tin nhà trọ thất bại: ${e.localizedMessage}"
+        }
+    }
+
+    fun updateHouse(
+        houseId: String,
+        addressLine: String,
+        city: String,
+        district: String,
+        floorCount: Int,
+        name: String,
+        ward: String
+    ) {
+        _isLoading.value = true
+        val request = HouseRequest(
+            addressLine = addressLine,
+            city = city,
+            district = district,
+            floorCount = floorCount,
+            name = name,
+            ward = ward
+        )
+        try {
+            ApiClient.houseService.updateHouse(houseId, request).enqueue(object : Callback<HouseResponse> {
+                override fun onResponse(
+                    call: Call<HouseResponse>,
+                    response: Response<HouseResponse>
+                ) {
+                    _isLoading.value = false
+                    if (response.isSuccessful) {
+                        _result.value = "Cập nhật nhà trọ thành công"
+                    } else {
+                        _result.value =
+                            "Cập nhật nhà trọ thất bại: ${if (response.code() == 400) "Sai thông tin" else "Lỗi không xác định"}"
+                    }
+                }
+
+                override fun onFailure(call: Call<HouseResponse>, t: Throwable) {
+                    _isLoading.value = false
+                    _result.value = "Cập nhật nhà trọ thất bại: ${t.message}"
+                }
+            })
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _result.value = "Cập nhật nhà trọ thất bại: ${e.localizedMessage}"
+        }
+    }
 }
