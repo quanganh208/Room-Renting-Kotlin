@@ -39,6 +39,7 @@ import com.itptit.roomrenting.presentation.room.CreateRoomScreen
 import com.itptit.roomrenting.presentation.room.CreateRoomViewModel
 import com.itptit.roomrenting.presentation.room.RoomScreen
 import com.itptit.roomrenting.presentation.room.RoomViewModel
+import com.itptit.roomrenting.presentation.room.asset.QLTaiSan
 import com.itptit.roomrenting.presentation.service.AddServiceScreen
 import com.itptit.roomrenting.presentation.service.ServiceScreen
 
@@ -153,6 +154,11 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                     roomId = roomId ?: "",
                     viewModel = viewModel
                 )
+            }
+
+            composable(route = "${Route.AssetRoomScreen.route}/{roomId}") { backStackEntry ->
+                val roomId = backStackEntry.arguments?.getString("roomId")
+                QLTaiSan(roomId = roomId ?: "", navController = navController)
             }
 
             composable(route = Route.InvoiceScreen.route) {

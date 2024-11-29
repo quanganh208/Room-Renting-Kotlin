@@ -38,6 +38,8 @@ sealed class Route(
 
     object CreateRoomScreen: Route(route = "createRoomScreen/{houseId}/{roomId}")
 
+    object AssetRoomScreen: Route(route = "assetRoomScreen/{roomId}")
+
     object UserInformationScreen: Route(route = "userInformationScreen")
 
     object AppStartNavigation : Route(route = "appStartNavigation")
