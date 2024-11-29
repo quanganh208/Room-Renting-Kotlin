@@ -18,7 +18,7 @@ sealed class Route(
 
     object AddressLocationScreen : Route(route = "addressLocationScreen")
 
-    object AddAssetScreen : Route(route = "addAssetScreen")
+    object AddAssetScreen : Route(route = "addAssetScreen/{roomId}/{nameRoom}")
 
     object AddContractScreen : Route(route = "addContractScreen")
 
@@ -38,7 +38,7 @@ sealed class Route(
 
     object CreateRoomScreen: Route(route = "createRoomScreen/{houseId}/{roomId}")
 
-    object AssetRoomScreen: Route(route = "assetRoomScreen/{roomId}")
+    object AssetRoomScreen: Route(route = "assetRoomScreen/{roomId}/{nameRoom}")
 
     object UserInformationScreen: Route(route = "userInformationScreen")
 

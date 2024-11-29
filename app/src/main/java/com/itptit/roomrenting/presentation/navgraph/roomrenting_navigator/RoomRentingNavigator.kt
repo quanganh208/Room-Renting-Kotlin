@@ -22,6 +22,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.presentation.home.addasset.AddAssetScreen
+import com.itptit.roomrenting.presentation.home.addasset.AddAssetViewModel
+import com.itptit.roomrenting.presentation.home.addcontract.AddContractScreen
+import com.itptit.roomrenting.presentation.home.addcontract.AddContractViewModel
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationScreen
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
 import com.itptit.roomrenting.presentation.home.main.HomeScreen
@@ -156,9 +160,14 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 )
             }
 
-            composable(route = "${Route.AssetRoomScreen.route}/{roomId}") { backStackEntry ->
+            composable(route = "${Route.AssetRoomScreen.route}/{roomId}/{nameRoom}") { backStackEntry ->
                 val roomId = backStackEntry.arguments?.getString("roomId")
-                QLTaiSan(roomId = roomId ?: "", navController = navController)
+                val nameRoom = backStackEntry.arguments?.getString("nameRoom")
+                QLTaiSan(
+                    roomId = roomId ?: "",
+                    nameRoom = nameRoom ?: "",
+                    navController = navController
+                )
             }
 
             composable(route = Route.InvoiceScreen.route) {
@@ -194,6 +203,22 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                         navigateToLogin(sharedNavController)
                     },
                 )
+            }
+
+            composable(route = "${Route.AddAssetScreen.route}/{roomId}/{nameRoom}") { backStackEntry ->
+                val roomId = backStackEntry.arguments?.getString("roomId")
+                val nameRoom = backStackEntry.arguments?.getString("nameRoom")
+                val viewModel: AddAssetViewModel = hiltViewModel()
+                AddAssetScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    roomId = roomId ?: "",
+                    nameRoom = nameRoom ?: ""
+                )
+            }
+            composable(route = Route.AddContractScreen.route) {
+                val viewModel: AddContractViewModel = hiltViewModel()
+                AddContractScreen(navController = navController, viewModel = viewModel)
             }
         }
     }

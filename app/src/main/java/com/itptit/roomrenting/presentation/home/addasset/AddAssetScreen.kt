@@ -89,7 +89,7 @@ fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = androidx.lifecycle.viewmodel.compose.viewModel()) {
+fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), roomId: String, nameRoom: String) {
     val uploadState by viewModel.uploadState.collectAsState()
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -99,7 +99,7 @@ fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = 
 
     FullScreenLoadingModal(isVisible = uploadState is AddAssetViewModel.UploadState.Loading)
     Scaffold(
-        topBar = { AddAssetTopBar(navController) },
+        topBar = { AddAssetTopBar(navController, nameRoom) },
         modifier = Modifier
             .fillMaxSize()
             .padding(WindowInsets.safeDrawing.asPaddingValues())
@@ -227,7 +227,7 @@ fun ImagePickerSection(selectedImageUri: Uri?, onPickImage: () -> Unit) {
 }
 
 @Composable
-fun AddAssetTopBar(navController: NavController) {
+fun AddAssetTopBar(navController: NavController, roomName: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -267,7 +267,7 @@ fun AddAssetTopBar(navController: NavController) {
                     fontWeight = FontWeight.Bold // Đậm cho tiêu đề
                 )
                 Text(
-                    text = "Nhà trọ Đức Sơn",
+                    text = "Phòng trọ ${roomName}",
                     color = Color.Gray,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium // Đậm hơn một chút so với mặc định

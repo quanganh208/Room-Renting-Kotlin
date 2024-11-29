@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,25 +32,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.itptit.roomrenting.R
+import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.launch
 
 data class Taisan(
     val tenTaiSan: String,
-    val gia: Double,
-    val soluong: String,
-    val DonVi: String,
-//    val painter: Painter
+    val imageUrl: String
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaiSan(tenTaiSan: String, gia: Double, soluong: String, DonVi: String){
+fun TaiSan(tenTaiSan: String, imageUrl: String) {
     Box(modifier = Modifier
         .border(BorderStroke(1.dp,Color(0xffeeeeee)), shape = RoundedCornerShape(16.dp))
         .fillMaxWidth()
@@ -63,20 +61,16 @@ fun TaiSan(tenTaiSan: String, gia: Double, soluong: String, DonVi: String){
                         shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-//                    Icon(
-//                        painter = painter,
-//                        contentDescription = "",
-//                        tint = Color.Unspecified,
-//                        modifier = Modifier.size(40.dp)
-//                    )
+                    Icon(
+                        painter = rememberAsyncImagePainter(model = imageUrl),
+                        contentDescription = "",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(40.dp).clip(CircleShape)
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Text(text = tenTaiSan, fontWeight = FontWeight.Bold)
-                    Text(text = "$gia đ", fontWeight = FontWeight.Bold)
-                    Text(text = "Số lượng: $soluong $DonVi")
-                }
+                Text(text = tenTaiSan, fontWeight = FontWeight.Bold)
             }
 
             Box(modifier = Modifier
@@ -118,11 +112,11 @@ fun TaiSan(tenTaiSan: String, gia: Double, soluong: String, DonVi: String){
                                         .size(40.dp)
                                         .background(Color(0xffe3f5e3), shape = CircleShape),
                                         contentAlignment = Alignment.Center) {
-//                                        Icon(
-//                                            painter = painterResource(id = R.drawable.baseline_edit_square_24),
-//                                            contentDescription = "",
-//                                            tint = Color(0xff069850)
-//                                        )
+                                        Icon(
+                                            Icons.Default.Edit,
+                                            contentDescription = "",
+                                            tint = Color(0xff069850)
+                                        )
                                     }
                                     Spacer(modifier = Modifier.width(20.dp))
                                     Text(text = "Chỉnh sửa: $tenTaiSan",
@@ -140,14 +134,14 @@ fun TaiSan(tenTaiSan: String, gia: Double, soluong: String, DonVi: String){
                                         .size(40.dp)
                                         .background(Color(0xfff6e8e8), shape = CircleShape),
                                         contentAlignment = Alignment.Center){
-//                                        Icon(
-//                                            painter = painterResource(id = R.drawable.baseline_bookmark_remove_24),
-//                                            contentDescription = "",
-//                                            tint = Color(0xffd84136)
-//                                        )
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = "",
+                                            tint = Color(0xffd84136)
+                                        )
                                     }
                                     Spacer(modifier = Modifier.width(20.dp))
-                                    Text(text = "Xóa tài sản: $tenTaiSan",
+                                    Text(text = "Xóa: $tenTaiSan",
                                         color = Color.Black,
                                         fontWeight = FontWeight.Bold)
                                 }

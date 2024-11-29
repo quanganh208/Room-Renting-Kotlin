@@ -10,10 +10,6 @@ import com.itptit.roomrenting.presentation.auth.login.LoginScreen
 import com.itptit.roomrenting.presentation.auth.login.LoginViewModel
 import com.itptit.roomrenting.presentation.auth.register.RegisterScreen
 import com.itptit.roomrenting.presentation.auth.register.RegisterViewModel
-import com.itptit.roomrenting.presentation.home.addasset.AddAssetScreen
-import com.itptit.roomrenting.presentation.home.addasset.AddAssetViewModel
-import com.itptit.roomrenting.presentation.home.addcontract.AddContractScreen
-import com.itptit.roomrenting.presentation.home.addcontract.AddContractViewModel
 import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.RoomRentingNavigator
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingScreen
 import com.itptit.roomrenting.presentation.onboarding.OnBoardingViewModel
@@ -64,15 +60,6 @@ fun NavGraph(
         ) {
             composable(route = Route.RoomRentingNavigator.route) {
                 RoomRentingNavigator(sharedNavController = navController)
-            }
-
-            composable(route = Route.AddAssetScreen.route) {
-                val viewModel: AddAssetViewModel = hiltViewModel()
-                AddAssetScreen(navController = navController, viewModel = viewModel)
-            }
-            composable(route = Route.AddContractScreen.route) {
-                val viewModel: AddContractViewModel = hiltViewModel()
-                AddContractScreen(navController = navController, viewModel = viewModel)
             }
         }
     }

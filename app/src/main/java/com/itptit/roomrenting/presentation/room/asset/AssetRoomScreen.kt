@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,12 +34,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
-fun QLTaiSan(roomId: String, navController: NavController) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(WindowInsets.safeDrawing.asPaddingValues())
+fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -77,31 +81,34 @@ fun QLTaiSan(roomId: String, navController: NavController) {
 
                 Column {
                     Text(text = "Danh sách tài sản", fontWeight = FontWeight.Bold)
-                    Text(text = "Nhà trọ Đom Đóm")
+                    Text(text = "Phòng $nameRoom")
                 }
             }
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .border(BorderStroke(1.dp, Color(0xffecf0f3)))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .border(BorderStroke(1.dp, Color(0xffecf0f3)))
             )
 
             LazyTaiSan()
         }
 
         FloatingActionButton(
-            onClick = {},
+            onClick = {
+                navController.navigate("${Route.AddAssetScreen.route}/$roomId/$nameRoom")
+            },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp),
             containerColor = Color(0xff019e47)
         ) {
-//            Icon(
-//                painter = painterResource(id = R.drawable.baseline_add_24),
-//                tint = Color.White,
-//                contentDescription = "",
-//                modifier = Modifier.size(40.dp)
-//            )
+            Icon(
+                Icons.Default.Add,
+                contentDescription = "Add",
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }
@@ -112,24 +119,15 @@ fun LazyTaiSan() {
     val taisans = listOf(
         Taisan(
             tenTaiSan = "Tủ lạnh",
-            gia = 1000000.0,
-            soluong = "1",
-            DonVi = "Cái/Chiếc",
-//            painter = painterResource(id = R.drawable.baseline_panorama_vertical_select_24)
+            imageUrl = "https://cdn.tgdd.vn/Products/Images/1943/326891/tu-lanh-aqua-inverter-358-lit-aqr-t410fa-wgb-1-700x467.jpg",
         ),
         Taisan(
             tenTaiSan = "Máy giặt",
-            gia = 7500000.0,
-            soluong = "1",
-            DonVi = "Cái/Chiếc",
-//            painter = painterResource(id = R.drawable.baseline_panorama_vertical_select_24)
+            imageUrl = "https://cdn.tgdd.vn/Products/Images/1943/326891/tu-lanh-aqua-inverter-358-lit-aqr-t410fa-wgb-1-700x467.jpg",
         ),
         Taisan(
             tenTaiSan = "Điều hòa",
-            gia = 12000000.0,
-            soluong = "2",
-            DonVi = "Cái/Chiếc",
-//            painter = painterResource(id = R.drawable.baseline_panorama_vertical_select_24)
+            imageUrl = "https://cdn.tgdd.vn/Products/Images/1943/326891/tu-lanh-aqua-inverter-358-lit-aqr-t410fa-wgb-1-700x467.jpg",
         )
     )
 
@@ -143,10 +141,7 @@ fun LazyTaiSan() {
             val taisan = taisans[index]
             TaiSan(
                 tenTaiSan = taisan.tenTaiSan,
-                gia = taisan.gia,
-                soluong = taisan.soluong,
-                DonVi = taisan.DonVi,
-//                painter = taisan.painter
+                imageUrl = taisan.imageUrl
             )
         }
     }
