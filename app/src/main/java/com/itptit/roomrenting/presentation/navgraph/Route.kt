@@ -22,29 +22,31 @@ sealed class Route(
 
     object AddContractScreen : Route(route = "addContractScreen")
 
-    object MoreInformationScreen: Route(route = "moreInformationScreen")
+    object MoreInformationScreen : Route(route = "moreInformationScreen")
 
     object ServiceScreen : Route(route = "serviceScreen/{houseName}")
 
     object AddServiceScreen : Route(route = "addServiceScreen/{houseName}")
 
-    object ContractScreen: Route(route = "contractScreen/{houseName}")
+    object ContractScreen : Route(route = "contractScreen/{houseName}")
 
-    object InvoiceScreen: Route(route = "invoiceScreen/{houseName}")
+    object InvoiceScreen : Route(route = "invoiceScreen/{houseName}")
 
-    object AssetScreen: Route(route = "assetScreen/{houseName}")
+    object AssetScreen : Route(route = "assetScreen/{houseName}")
 
-    object RoomScreen: Route(route = "roomScreen/{houseId}/{houseName}")
+    object RoomScreen : Route(route = "roomScreen/{houseId}/{houseName}")
 
-    object CreateRoomScreen: Route(route = "createRoomScreen/{houseId}/{roomId}")
+    object CreateRoomScreen : Route(route = "createRoomScreen/{houseId}/{roomId}")
 
-    object AssetRoomScreen: Route(route = "assetRoomScreen/{roomId}/{nameRoom}")
+    object AssetRoomScreen : Route(route = "assetRoomScreen/{roomId}/{nameRoom}")
 
-    object UserInformationScreen: Route(route = "userInformationScreen")
+    object UserInformationScreen : Route(route = "userInformationScreen")
 
-    object CreateContractScreen: Route(route = "createContractScreen/{roomId}/{roomName}")
+    object CreateContractScreen : Route(route = "createContractScreen/{roomId}/{roomName}")
 
     object DetailRoomScreen : Route(route = "detailRoomScreen/{roomId}")
+
+    object MakeInvoiceScreen : Route(route = "makeInvoiceScreen/{rentedRoomId}")
 
     object AppStartNavigation : Route(route = "appStartNavigation")
 

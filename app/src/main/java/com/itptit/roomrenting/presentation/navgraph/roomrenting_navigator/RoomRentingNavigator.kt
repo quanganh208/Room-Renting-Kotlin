@@ -1,7 +1,9 @@
 package com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator
 
+import android.os.Build
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseViewModel
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -30,6 +32,7 @@ import com.itptit.roomrenting.presentation.home.createcontract.CreateContractScr
 import com.itptit.roomrenting.presentation.home.createcontract.CreateContractViewModel
 import com.itptit.roomrenting.presentation.home.main.HomeScreen
 import com.itptit.roomrenting.presentation.home.main.HomeViewModel
+import com.itptit.roomrenting.presentation.home.makeinvoice.MakeInvoiceScreen
 import com.itptit.roomrenting.presentation.home.moreinfo.MoreInformationScreen
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseScreen
 import com.itptit.roomrenting.presentation.home.userinfo.UserInformationScreen
@@ -258,6 +261,14 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                     houseId = houseId ?: "",
                     roomId = roomId ?: "",
                     viewModel = viewModel
+                )
+            }
+
+            composable(route = "${Route.MakeInvoiceScreen.route}/{rentedRoomId}") { backStackEntry ->
+                val rentedRoomId = backStackEntry.arguments?.getString("rentedRoomId")
+                MakeInvoiceScreen(
+                    navController = navController,
+                    rentedRoomId = rentedRoomId ?: ""
                 )
             }
         }

@@ -1,5 +1,7 @@
 package com.itptit.roomrenting.presentation.room
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,10 +26,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.itptit.roomrenting.domain.model.room.Data
 import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
+import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
 fun TopNavigationBar(
@@ -90,7 +92,7 @@ fun TopNavigationBar(
 }
 
 @Composable
-fun MainScreen(room: Data) {
+fun MainScreen(room: Data, navController: NavController) {
     var selectedTab by remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -106,9 +108,44 @@ fun MainScreen(room: Data) {
         ) {
             when (selectedTab) {
                 0 -> thongtin(room)
-                1 -> Text(text = "Nội dung tab Hóa đơn", fontSize = 20.sp)
+                1 -> InvoiceScreen(navController = navController)
                 2 -> Text(text = "Nội dung tab Lịch sử", fontSize = 20.sp)
             }
+        }
+    }
+}
+
+@Composable
+fun InvoiceScreen(navController: NavController) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .border(BorderStroke(1.dp, Color(0xffecf0f3)))
+            )
+
+            ListHD()
+        }
+
+
+        FloatingActionButton(
+            onClick = { navController.navigate("${Route.MakeInvoiceScreen.route}/0") },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            containerColor = Color(0xff019e47)
+        ) {
+            Icon(
+                Icons.Default.Add,
+                tint = Color.White,
+                contentDescription = "",
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }
@@ -286,188 +323,6 @@ fun thongtin(room: Data) {
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Text(
-                                text = "Dịch vụ của phòng",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = "Phòng đang sử dụng được tính vào hóa đơn",
-                                fontSize = 14.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .border(BorderStroke(1.dp, Color(0xffcacaca)))
-                    ) {}
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Tên & giá dịch vụ",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                        Text(
-                            text = "Chỉ số sử dụng",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(
-                                BorderStroke(1.dp, Color(0xffe3e3e3)),
-                                shape = RoundedCornerShape(10.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(5.dp)
-                                .border(BorderStroke(1.dp, Color(0xfffdfdfd)))
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(70.dp)
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(text = "Tiền điện", fontSize = 14.sp)
-                                    Text(
-                                        text = "1.700 đ/1 Kwh",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier.background(
-                                        Color(0xfffef5ee),
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                                ) {
-                                    Text(text = "Chưa sử dụng", fontSize = 14.sp)
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(1.dp)
-                                    .border(BorderStroke(1.dp, Color(0xffcacaca)))
-                            ) {}
-
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(70.dp)
-                                    .padding(10.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(text = "Tiền nước", fontSize = 14.sp)
-                                    Text(
-                                        text = "18.000 đ/1 Khối",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp
-                                    )
-                                }
-                                Box(
-                                    modifier = Modifier.background(
-                                        Color(0xfffef5ee),
-                                        shape = RoundedCornerShape(10.dp)
-                                    )
-                                ) {
-                                    Text(text = "Chưa sử dụng", fontSize = 14.sp)
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .background(Color(0xffeeeeee), shape = RoundedCornerShape(10.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Button(
-                            onClick = {},
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xffeeeeee)
-                            )
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = "",
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Text(
-                                text = "Chỉnh sửa dịch vụ",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = Color.Black
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                }
-            }
-        }
-
-        item {
-            Box(
-                modifier = Modifier
-                    .background(Color.White)
-                    .padding(10.dp)
-            ) {
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    Color(0xff019e47),
-                                    shape = RoundedCornerShape(10.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = "#", color = Color.White, fontSize = 25.sp)
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
                                 text = "Quản lý phương tiện",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
@@ -489,21 +344,7 @@ fun thongtin(room: Data) {
                             .fillMaxWidth()
                             .height(1.dp)
                             .border(BorderStroke(1.dp, Color(0xffcacaca)))
-                    ) {}
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Phòng chưa có hợp đồng",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(80.dp))
+                    )
                 }
             }
         }
@@ -635,33 +476,7 @@ fun ChiTietPhong(
                     .border(BorderStroke(1.dp, Color(0xffcacaca)))
             ) {}
             Box(modifier = Modifier.background(Color(0xffebeff2))) {
-                MainScreen(room.data)
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-        ) {
-            Button(
-                onClick = { },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xfffd0100)
-                )
-            ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "",
-                    tint = Color.White
-                )
-                Spacer(modifier = Modifier.width(15.dp))
-                Text(
-                    text = "Xóa phòng",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
+                MainScreen(room.data, navController)
             }
         }
     }

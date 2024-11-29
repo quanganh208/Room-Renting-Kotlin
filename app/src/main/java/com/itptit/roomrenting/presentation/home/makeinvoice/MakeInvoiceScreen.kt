@@ -91,7 +91,7 @@ import java.util.*
 
 
 @Composable
-fun MakeInvoiceScreen(navController: NavController, roomId: String) {
+fun MakeInvoiceScreen(navController: NavController, rentedRoomId: String) {
     Scaffold(
         topBar = { CreateContractTopBar(navController) },
         content = { paddingValues ->
@@ -212,6 +212,7 @@ fun CreateContractTopBar(navController: NavController) {
         }
     }
 }
+
 @Composable
 fun CreateContractContent() {
     var electricityNumber by remember { mutableStateOf("") }
