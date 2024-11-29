@@ -55,7 +55,7 @@ import com.itptit.roomrenting.presentation.navgraph.Route
 
 
 @Composable
-fun RoomRented(viewModel: RoomViewModel, houseId: Int) {
+fun RoomRented(viewModel: RoomViewModel, houseId: Int, navController: NavController) {
     val rooms =
         viewModel.rooms.collectAsState().value.data.filter { it.isCurrentlyRented }.toMutableList()
     Box(
@@ -63,32 +63,44 @@ fun RoomRented(viewModel: RoomViewModel, houseId: Int) {
             .background(color = Color(0xffe6f2ee))
     ) {
         rooms.forEach {
-            Phong(room = it, onDeleteRoom = {
-                viewModel.deleteRoom(houseId.toString(), it.id.toString())
-            })
+            Phong(
+                room = it,
+                onDeleteRoom = {
+                    viewModel.deleteRoom(houseId.toString(), it.id.toString())
+                },
+                onEditRoom = {
+                    navController.navigate("${Route.CreateRoomScreen.route}/$houseId/${it.id}")
+                }
+            )
             Spacer(modifier = Modifier.height(15.dp))
         }
     }
 }
 
 @Composable
-fun AllRoomRent(viewModel: RoomViewModel, houseId: Int) {
+fun AllRoomRent(viewModel: RoomViewModel, houseId: Int, navController: NavController) {
     val rooms = viewModel.rooms.collectAsState().value.data.toMutableList()
     Box(
         modifier = Modifier
             .background(color = Color(0xffe6f2ee))
     ) {
         rooms.forEach {
-            Phong(room = it, onDeleteRoom = {
-                viewModel.deleteRoom(houseId.toString(), it.id.toString())
-            })
+            Phong(
+                room = it,
+                onDeleteRoom = {
+                    viewModel.deleteRoom(houseId.toString(), it.id.toString())
+                },
+                onEditRoom = {
+                    navController.navigate("${Route.CreateRoomScreen.route}/$houseId/${it.id}")
+                }
+            )
             Spacer(modifier = Modifier.height(15.dp))
         }
     }
 }
 
 @Composable
-fun TabNavigationExample(viewModel: RoomViewModel, houseId: Int) {
+fun TabNavigationExample(viewModel: RoomViewModel, houseId: Int, navController: NavController) {
     val tabs = listOf("Toàn bộ phòng", "Đã cho thuê")
     val selectedTab = remember { mutableIntStateOf(0) }
 
@@ -135,8 +147,17 @@ fun TabNavigationExample(viewModel: RoomViewModel, houseId: Int) {
         ) {
 
             when (selectedTab.intValue) {
-                0 -> AllRoomRent(viewModel = viewModel, houseId = houseId)
-                1 -> RoomRented(viewModel = viewModel, houseId = houseId)
+                0 -> AllRoomRent(
+                    viewModel = viewModel,
+                    houseId = houseId,
+                    navController = navController
+                )
+
+                1 -> RoomRented(
+                    viewModel = viewModel,
+                    houseId = houseId,
+                    navController = navController
+                )
             }
         }
     }
@@ -226,14 +247,14 @@ fun RoomScreen(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
-                TabNavigationExample(viewModel, houseId)
+                TabNavigationExample(viewModel, houseId, navController)
             }
 
         }
 
         FloatingActionButton(
             onClick = {
-                navController.navigate("${Route.CreateRoomScreen.route}/$houseId")
+                navController.navigate("${Route.CreateRoomScreen.route}/$houseId/0")
             },
             modifier = Modifier
                 .padding(16.dp)

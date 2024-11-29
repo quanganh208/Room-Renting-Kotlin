@@ -41,7 +41,12 @@ import com.itptit.roomrenting.R
 import com.itptit.roomrenting.domain.model.room.Data
 
 @Composable
-fun In4(room: Data, onDeleteRoom: () -> Unit) {
+fun In4(
+    room: Data,
+    onDeleteRoom: () -> Unit,
+    onEditRoom: () -> Unit,
+    onCloseBottomSheet: () -> Unit
+) {
     var isConfirmDialogVisible by remember { mutableStateOf(false) }
 
     Column {
@@ -102,7 +107,11 @@ fun In4(room: Data, onDeleteRoom: () -> Unit) {
                 }
                 Ktra(
                     painterResource(id = R.drawable.baseline_edit_24),
-                    "Chỉnh sửa thông tin cơ bản"
+                    "Chỉnh sửa thông tin cơ bản",
+                    onClick = {
+                        onCloseBottomSheet()
+                        onEditRoom()
+                    }
                 )
                 Box(
                     modifier = Modifier
@@ -145,6 +154,7 @@ fun In4(room: Data, onDeleteRoom: () -> Unit) {
             confirmButton = {
                 Button(onClick = {
                     isConfirmDialogVisible = false
+                    onCloseBottomSheet()
                     onDeleteRoom()
                 }) {
                     Text("OK")

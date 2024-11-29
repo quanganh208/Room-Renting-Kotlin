@@ -55,6 +55,7 @@ import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 fun CreateRoomScreen(
     onBack: () -> Unit,
     houseId: String,
+    roomId: String,
     viewModel: CreateRoomViewModel
 ) {
     var name by remember { mutableStateOf("") }
@@ -121,9 +122,10 @@ fun CreateRoomScreen(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Thêm phòng",
+                        text = if (roomId != "0") "Sửa phòng" else "Thêm phòng",
                         fontWeight = FontWeight.Black,
                         fontSize = 20.sp
+
                     )
                 }
             }
@@ -288,7 +290,8 @@ fun CreateRoomScreen(
                     houseId = houseId,
                     name = name,
                     capacity = capacity,
-                    description = description
+                    description = description,
+                    roomId = roomId
                 )
             }
         }
@@ -311,7 +314,6 @@ fun CreateRoomScreen(
             )
         }
     }
-
 }
 
 @Composable
@@ -321,7 +323,8 @@ fun TwoButtonsRow(
     houseId: String,
     name: String,
     capacity: String,
-    description: String
+    description: String,
+    roomId: String
 ) {
     Row(
         modifier = Modifier
@@ -352,12 +355,22 @@ fun TwoButtonsRow(
 
         Button(
             onClick = {
-                viewModel.createRoom(
-                    houseId = houseId,
-                    name = name,
-                    capacity = capacity.toInt(),
-                    description = description
-                )
+                if (roomId == "0") {
+                    viewModel.createRoom(
+                        houseId = houseId,
+                        name = name,
+                        capacity = capacity.toInt(),
+                        description = description
+                    )
+                } else {
+                    viewModel.updateRoom(
+                        houseId = houseId,
+                        roomId = roomId,
+                        name = name,
+                        capacity = capacity.toInt(),
+                        description = description
+                    )
+                }
             },
             modifier = Modifier
                 .weight(1f)
@@ -367,7 +380,7 @@ fun TwoButtonsRow(
             contentPadding = PaddingValues(0.dp)
         ) {
             Text(
-                text = "+ Thêm phòng",
+                text = if (roomId == "0") "+ Thêm phòng" else "Sửa phòng",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

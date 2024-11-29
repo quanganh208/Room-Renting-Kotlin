@@ -140,8 +140,9 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                     viewModel = viewModel
                 )
             }
-            composable(route = "${Route.CreateRoomScreen.route}/{houseId}") { backStackEntry ->
+            composable(route = "${Route.CreateRoomScreen.route}/{houseId}/{roomId}") { backStackEntry ->
                 val houseId = backStackEntry.arguments?.getString("houseId")
+                val roomId = backStackEntry.arguments?.getString("roomId")
                 val viewModel: CreateRoomViewModel = hiltViewModel()
                 OnBackClickStateSaver(navController)
                 CreateRoomScreen(
@@ -149,6 +150,7 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                         navController.popBackStack()
                     },
                     houseId = houseId ?: "",
+                    roomId = roomId ?: "",
                     viewModel = viewModel
                 )
             }

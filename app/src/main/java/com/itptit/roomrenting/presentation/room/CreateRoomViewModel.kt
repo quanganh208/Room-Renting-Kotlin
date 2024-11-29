@@ -55,4 +55,44 @@ class CreateRoomViewModel : ViewModel() {
             _result.value = "Tạo phòng trọ thất bại: ${e.localizedMessage}"
         }
     }
+
+    fun updateRoom(
+        houseId: String,
+        roomId: String,
+        name: String,
+        capacity: Int,
+        description: String,
+    ) {
+        _isLoading.value = true
+        val request = RoomRequest(
+            name = name,
+            capacity = capacity,
+            description = description
+        )
+        try {
+            ApiClient.roomService.updateRoom(houseId = houseId, roomId = roomId, request = request)
+                .enqueue(object : Callback<RoomResponse> {
+                    override fun onResponse(
+                        call: Call<RoomResponse>,
+                        response: Response<RoomResponse>
+                    ) {
+                        _isLoading.value = false
+                        if (response.isSuccessful) {
+                            _result.value = "Cập nhật phòng trọ thành công"
+                        } else {
+                            _result.value =
+                                "Cập nhật phòng trọ thất bại: ${if (response.code() == 400) "Sai thông tin" else "Lỗi không xác định"}"
+                        }
+                    }
+
+                    override fun onFailure(call: Call<RoomResponse>, t: Throwable) {
+                        _isLoading.value = false
+                        _result.value = "Cập nhật phòng trọ thất bại: ${t.message}"
+                    }
+                })
+        } catch (e: Exception) {
+            _isLoading.value = false
+            _result.value = "Cập nhật phòng trọ thất bại: ${e.localizedMessage}"
+        }
+    }
 }
