@@ -46,7 +46,8 @@ fun In4(
     onDeleteRoom: () -> Unit,
     onEditRoom: () -> Unit,
     onCloseBottomSheet: () -> Unit,
-    onAssetRoom: () -> Unit
+    onAssetRoom: () -> Unit,
+    onCreateContract:() ->  Unit
 ) {
     var isConfirmDialogVisible by remember { mutableStateOf(false) }
 
@@ -133,15 +134,12 @@ fun In4(
                         .height(1.dp)
                         .border(BorderStroke(10.dp, color = Color(0xffe2e2e2)))
                 )
-                Ktra(painterResource(id = R.drawable.baseline_bookmark_add_24), "Lập hợp đồng mới")
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .border(BorderStroke(10.dp, color = Color(0xffe2e2e2)))
-                ) {
-                }
-                Ktra(painterResource(id = R.drawable.baseline_edit_location_24), "Cọc giữ chỗ")
+                Ktra(painterResource(id = R.drawable.baseline_bookmark_add_24), "Lập hợp đồng mới",
+                    onClick = {
+                        onCloseBottomSheet()
+                        onCreateContract()
+                    }
+                    )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

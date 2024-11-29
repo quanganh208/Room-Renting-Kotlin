@@ -33,7 +33,7 @@ import androidx.navigation.NavController
 import com.itptit.roomrenting.R
 
 @Composable
-fun AssetScreen(navController: NavController) {
+fun AssetScreen(navController: NavController, nameHouse: String) {
 
     Box(
         modifier = Modifier
@@ -76,7 +76,7 @@ fun AssetScreen(navController: NavController) {
 
                 Column {
                     Text(text = "Danh sách tài sản", fontWeight = FontWeight.Bold)
-                    Text(text = "Nhà trọ Đom Đóm")
+                    Text(text = "Nhà trọ $nameHouse")
                 }
             }
 

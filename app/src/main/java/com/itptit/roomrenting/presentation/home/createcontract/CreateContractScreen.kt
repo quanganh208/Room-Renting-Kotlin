@@ -26,7 +26,7 @@ import androidx.navigation.NavController
 import java.util.*
 
 @Composable
-fun CreateContractScreen(navController: NavController) {
+fun CreateContractScreen(navController: NavController, roomId: String) {
     Scaffold(
         topBar = { CreateContractTopBar(navController) },
         content = { paddingValues ->
@@ -41,7 +41,14 @@ fun CreateContractScreen(navController: NavController) {
                     CreateContractContent()
                 }
             }
-        }
+        },
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = WindowInsets.safeDrawing
+                    .asPaddingValues()
+                    .calculateTopPadding()
+            )
     )
 }
 
@@ -192,7 +199,8 @@ fun CreateContractContent() {
             value = paymentDay,
             onValueChange = { input ->
                 // Chỉ cho phép nhập số và giá trị từ 1 đến 31
-                if (input.all { it.isDigit() } && (input.isEmpty() || (input.toIntOrNull() ?: 0) in 1..31)) {
+                if (input.all { it.isDigit() } && (input.isEmpty() || (input.toIntOrNull()
+                        ?: 0) in 1..31)) {
                     paymentDay = input
                 }
             },
@@ -310,7 +318,6 @@ fun LabelText(text: String) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateInputFields() {
     val context = LocalContext.current
@@ -414,7 +421,7 @@ fun DateInputField(
                 .fillMaxWidth()
         ) {
             Text(
-                text = if (date.isEmpty()) label else date,
+                text = date.ifEmpty { label },
                 color = if (date.isEmpty()) Color.Gray else Color.Black,
                 fontSize = 16.sp
             )

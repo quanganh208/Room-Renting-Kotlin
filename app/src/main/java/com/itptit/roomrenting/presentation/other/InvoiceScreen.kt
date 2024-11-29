@@ -40,31 +40,40 @@ import androidx.navigation.NavController
 import com.itptit.roomrenting.R
 
 @Composable
-fun InvoiceScreen(navController: NavController) {
+fun InvoiceScreen(navController: NavController, houseName: String) {
 
     val isAdvancedSearchVisible = remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(WindowInsets.safeDrawing.asPaddingValues())
-    ){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.safeDrawing.asPaddingValues())
+    ) {
         Column {
-            Row(modifier = Modifier.padding(10.dp).background(Color.White),
-                verticalAlignment = Alignment.CenterVertically){
-                IconButton(onClick = {
-                    navController.popBackStack()
-                },
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .background(Color.White),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = {
+                        navController.popBackStack()
+                    },
                     modifier = Modifier
                         .size(35.dp)
-                        .background(color = Color(0xffeeeeee),
+                        .background(
+                            color = Color(0xffeeeeee),
                             shape = CircleShape
                         )
                         .border(
-                            BorderStroke(1.dp,
-                            Color(0xffd8d8d8)
+                            BorderStroke(
+                                1.dp,
+                                Color(0xffd8d8d8)
                             ),
                             shape = CircleShape
-                        )) {
+                        )
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                         tint = Color.Unspecified,
@@ -77,19 +86,28 @@ fun InvoiceScreen(navController: NavController) {
 
                 Column {
                     Text(text = "Tất cả hóa đơn", fontWeight = FontWeight.Bold)
-                    Text(text = "Nhà trọ Đom Đóm")
+                    Text(text = "Nhà trọ $houseName")
                 }
             }
 
-            Box(modifier = Modifier.fillMaxWidth().height(1.dp).border(
-                BorderStroke(1.dp,
-                    Color(0xffd8d8d8)
-                )
-            ))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .border(
+                        BorderStroke(
+                            1.dp,
+                            Color(0xffd8d8d8)
+                        )
+                    )
+            )
 
-            Box(modifier = Modifier.fillMaxSize()
-                .background(color = Color(0xffebeff2))
-                .padding(top = 10.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color(0xffebeff2))
+                    .padding(top = 10.dp)
+            ) {
 
                 Column(modifier = Modifier.background(Color.White)) {
                     Row(
@@ -125,7 +143,9 @@ fun InvoiceScreen(navController: NavController) {
                         }
                     }
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(10.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         chose(
@@ -142,7 +162,7 @@ fun InvoiceScreen(navController: NavController) {
 
                     val tmp = remember { mutableStateOf("") }
 
-                    if(isAdvancedSearchVisible.value) {
+                    if (isAdvancedSearchVisible.value) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -191,22 +211,31 @@ fun InvoiceScreen(navController: NavController) {
 
 
 @Composable
-fun chose(string1: String, string2: String, painter: Painter){
-    Row(verticalAlignment = Alignment.CenterVertically,
+fun chose(string1: String, string2: String, painter: Painter) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .border(BorderStroke(1.dp,
-                Color(0xffc8c8c8)),
+            .border(
+                BorderStroke(
+                    1.dp,
+                    Color(0xffc8c8c8)
+                ),
                 shape = RoundedCornerShape(10.dp)
-            )){
+            )
+    ) {
 
         TextButton(onClick = {}) {
             Column {
-                Text(text = string1,
+                Text(
+                    text = string1,
                     color = Color.Black,
-                    fontWeight = FontWeight.W400)
-                Text(text = string2,
+                    fontWeight = FontWeight.W400
+                )
+                Text(
+                    text = string2,
                     color = Color.Black,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
 

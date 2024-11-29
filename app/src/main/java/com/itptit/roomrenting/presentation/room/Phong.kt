@@ -46,7 +46,13 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Phong(room: Data, onDeleteRoom: () -> Unit, onEditRoom: () -> Unit, onAssetRoom: () -> Unit) {
+fun Phong(
+    room: Data,
+    onDeleteRoom: () -> Unit,
+    onEditRoom: () -> Unit,
+    onAssetRoom: () -> Unit,
+    onCreateContract: () -> Unit
+) {
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     val isSheetOpen = remember { mutableStateOf(false) }
@@ -308,7 +314,8 @@ fun Phong(room: Data, onDeleteRoom: () -> Unit, onEditRoom: () -> Unit, onAssetR
                             sheetState.hide()
                         }
                     },
-                    onAssetRoom
+                    onAssetRoom,
+                    onCreateContract
                 )
             }
         }

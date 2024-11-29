@@ -114,7 +114,8 @@ fun ToggleSwitchExample() {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddServiceScreen(
-    onBack:() -> Unit
+    onBack:() -> Unit,
+    houseName : String
 ){
     Box(
         modifier = Modifier
@@ -161,7 +162,7 @@ fun AddServiceScreen(
                             fontWeight = FontWeight.Black,
                             fontSize = 15.sp
                         )
-                        Text(text = "Nhà trọ ĐOM ĐÓM", fontSize = 15.sp)
+                        Text(text = "Nhà trọ $houseName", fontSize = 15.sp)
                     }
                 }
             }

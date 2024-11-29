@@ -26,6 +26,7 @@ import com.itptit.roomrenting.presentation.home.addcontract.AddContractScreen
 import com.itptit.roomrenting.presentation.home.addcontract.AddContractViewModel
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationScreen
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
+import com.itptit.roomrenting.presentation.home.createcontract.CreateContractScreen
 import com.itptit.roomrenting.presentation.home.main.HomeScreen
 import com.itptit.roomrenting.presentation.home.main.HomeViewModel
 import com.itptit.roomrenting.presentation.home.moreinfo.MoreInformationScreen
@@ -115,22 +116,27 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 )
             }
 
-            composable(route = Route.ServiceScreen.route) {
+            composable(route = "${Route.ServiceScreen.route}/{houseName}") { backStackEntry ->
+                val houseName = backStackEntry.arguments?.getString("houseName")
                 OnBackClickStateSaver(navController)
                 ServiceScreen(navigaToThemDV = {
-                    navController.navigate(Route.AddServiceScreen.route)
+                    navController.navigate("${Route.AddServiceScreen.route}/$houseName")
                 }, onBack = {
                     navController.popBackStack()
-                })
+                },
+                    houseName = houseName ?: ""
+                )
             }
-            composable(route = Route.AddServiceScreen.route) {
+            composable(route = "${Route.AddServiceScreen.route}/{houseName}") { backStackEntry ->
+                val houseName = backStackEntry.arguments?.getString("houseName")
                 AddServiceScreen(onBack = {
                     navController.popBackStack()
-                })
+                }, houseName = houseName ?: "")
             }
-            composable(route = Route.ContractScreen.route) {
+            composable(route = "${Route.ContractScreen.route}/{houseName}") { backStackEntry ->
+                val houseName = backStackEntry.arguments?.getString("houseName")
                 OnBackClickStateSaver(navController)
-                ContractScreen(navController = navController)
+                ContractScreen(navController = navController, houseName = houseName ?: "")
             }
 
             composable(route = "${Route.RoomScreen.route}/{houseId}/{houseName}") { backStackEntry ->
@@ -171,14 +177,16 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 )
             }
 
-            composable(route = Route.InvoiceScreen.route) {
+            composable(route = "${Route.InvoiceScreen.route}/{houseName}") { backStackEntry ->
+                val houseName = backStackEntry.arguments?.getString("houseName")
                 OnBackClickStateSaver(navController)
-                InvoiceScreen(navController = navController)
+                InvoiceScreen(navController = navController, houseName = houseName ?: "")
             }
 
-            composable(route = Route.AssetScreen.route) {
+            composable(route = "${Route.AssetScreen.route}/{houseName}") { backStackEntry ->
+                val houseName = backStackEntry.arguments?.getString("houseName")
                 OnBackClickStateSaver(navController)
-                AssetScreen(navController = navController)
+                AssetScreen(navController = navController, nameHouse = houseName ?: "")
             }
 
             composable(route = "${Route.RentalHouseScreen.route}/{houseId}") { backStackEntry ->
@@ -223,6 +231,12 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 val viewModel: AddContractViewModel = hiltViewModel()
                 AddContractScreen(navController = navController, viewModel = viewModel)
             }
+
+            composable(route = "${Route.CreateContractScreen.route}/{roomId}") { backStackEntry ->
+                val roomId = backStackEntry.arguments?.getString("roomId")
+                CreateContractScreen(navController = navController, roomId = roomId ?: "")
+            }
+
         }
     }
 }

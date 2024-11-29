@@ -91,7 +91,8 @@ fun Dvlist() {
 @Composable
 fun ServiceScreen(
     navigaToThemDV:() -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    houseName: String
 ) {
     Box(
         modifier = Modifier
@@ -133,7 +134,7 @@ fun ServiceScreen(
                         fontWeight = FontWeight.Black,
                         fontSize = 15.sp
                     )
-                    Text(text = "Nhà trọ ĐOM ĐÓM", fontSize = 15.sp)
+                    Text(text = "Nhà trọ $houseName", fontSize = 15.sp)
                 }
             }
 

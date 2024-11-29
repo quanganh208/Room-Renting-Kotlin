@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.itptit.roomrenting.R
 import com.itptit.roomrenting.presentation.Dimens.ExtraSmallPadding2
 import com.itptit.roomrenting.presentation.Dimens.IconSize

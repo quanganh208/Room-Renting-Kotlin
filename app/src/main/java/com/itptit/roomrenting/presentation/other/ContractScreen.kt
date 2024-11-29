@@ -36,7 +36,7 @@ import androidx.navigation.NavController
 import com.itptit.roomrenting.R
 
 @Composable
-fun ContractScreen(navController: NavController) {
+fun ContractScreen(navController: NavController, houseName: String) {
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -75,7 +75,7 @@ fun ContractScreen(navController: NavController) {
 
                 Column {
                     Text(text = "Danh sách hợp đồng", fontWeight = FontWeight.Bold)
-                    Text(text = "Nhà trọ Đom Đóm")
+                    Text(text = "Nhà trọ $houseName")
                 }
             }
 

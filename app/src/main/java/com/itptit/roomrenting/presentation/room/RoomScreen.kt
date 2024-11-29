@@ -77,6 +77,9 @@ fun RoomRented(viewModel: RoomViewModel, houseId: Int, navController: NavControl
                 },
                 onAssetRoom = {
                     navController.navigate("${Route.AssetRoomScreen.route}/${it.id}/${it.name}")
+                },
+                onCreateContract = {
+                    navController.navigate("${Route.CreateContractScreen.route}/${it.id}")
                 }
             )
             Spacer(modifier = Modifier.height(15.dp))
@@ -104,6 +107,9 @@ fun AllRoomRent(viewModel: RoomViewModel, houseId: Int, navController: NavContro
                 },
                 onAssetRoom = {
                     navController.navigate("${Route.AssetRoomScreen.route}/${it.id}/${it.name}")
+                },
+                onCreateContract = {
+                    navController.navigate("${Route.CreateContractScreen.route}/${it.id}")
                 }
             )
             Spacer(modifier = Modifier.height(15.dp))

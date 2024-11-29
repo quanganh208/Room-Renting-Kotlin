@@ -24,15 +24,15 @@ sealed class Route(
 
     object MoreInformationScreen: Route(route = "moreInformationScreen")
 
-    object ServiceScreen : Route(route = "serviceScreen")
+    object ServiceScreen : Route(route = "serviceScreen/{houseName}")
 
-    object AddServiceScreen : Route(route = "addServiceScreen")
+    object AddServiceScreen : Route(route = "addServiceScreen/{houseName}")
 
-    object ContractScreen: Route(route = "contractScreen")
+    object ContractScreen: Route(route = "contractScreen/{houseName}")
 
-    object InvoiceScreen: Route(route = "invoiceScreen")
+    object InvoiceScreen: Route(route = "invoiceScreen/{houseName}")
 
-    object AssetScreen: Route(route = "assetScreen")
+    object AssetScreen: Route(route = "assetScreen/{houseName}")
 
     object RoomScreen: Route(route = "roomScreen/{houseId}/{houseName}")
 
@@ -41,6 +41,8 @@ sealed class Route(
     object AssetRoomScreen: Route(route = "assetRoomScreen/{roomId}/{nameRoom}")
 
     object UserInformationScreen: Route(route = "userInformationScreen")
+
+    object CreateContractScreen: Route(route = "createContractScreen/{roomId}")
 
     object AppStartNavigation : Route(route = "appStartNavigation")
 

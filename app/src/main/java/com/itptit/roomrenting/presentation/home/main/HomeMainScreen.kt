@@ -151,7 +151,7 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                     title = "Quản lý hóa đơn",
                     description = "Quản lý hóa đơn tiền thuê, điện, nước và các khoản phí khác của từng khách hàng.",
                     onClick = {
-                        navController.navigate(Route.InvoiceScreen.route)
+                        navController.navigate("${Route.InvoiceScreen.route}/${selectedHouse!!.name}")
                     }
                 )
 
@@ -160,7 +160,7 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                     title = "Quản lý dịch vụ",
                     description = "Theo dõi và quản lý các dịch vụ bổ sung như vệ sinh, internet, và các tiện ích khác trong nhà trọ.",
                     onClick = {
-                        navController.navigate(Route.ServiceScreen.route)
+                        navController.navigate("${Route.ServiceScreen.route}/${selectedHouse!!.name}")
                     }
                 )
 
@@ -169,7 +169,7 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                     title = "Quản lý hợp đồng",
                     description = "Quản lý thông tin hợp đồng của từng khách thuê, bao gồm ngày bắt đầu, ngày kết thúc, và các điều khoản chi tiết.",
                     onClick = {
-                        navController.navigate(Route.ContractScreen.route)
+                        navController.navigate("${Route.ContractScreen.route}/${selectedHouse!!.name}")
                     }
                 )
 
@@ -178,7 +178,7 @@ fun MainScreen(navController: NavController, houses: AllHouseResponse) {
                     title = "Quản lý tài sản",
                     description = "Theo dõi và kiểm kê tài sản của nhà trọ, bao gồm nội thất, thiết bị, và các vật dụng khác.",
                     onClick = {
-                        navController.navigate(Route.AssetScreen.route)
+                        navController.navigate("${Route.AssetScreen.route}/${selectedHouse!!.name}")
                     }
                 )
             }
