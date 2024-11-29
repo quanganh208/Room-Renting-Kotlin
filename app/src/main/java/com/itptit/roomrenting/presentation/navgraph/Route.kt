@@ -44,6 +44,8 @@ sealed class Route(
 
     object CreateContractScreen: Route(route = "createContractScreen/{roomId}")
 
+    object DetailRoomScreen : Route(route = "detailRoomScreen/{roomId}")
+
     object AppStartNavigation : Route(route = "appStartNavigation")
 
     object AuthNavigation : Route(route = "authNavigation")

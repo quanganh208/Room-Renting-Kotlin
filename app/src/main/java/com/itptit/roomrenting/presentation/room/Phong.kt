@@ -51,7 +51,8 @@ fun Phong(
     onDeleteRoom: () -> Unit,
     onEditRoom: () -> Unit,
     onAssetRoom: () -> Unit,
-    onCreateContract: () -> Unit
+    onCreateContract: () -> Unit,
+    onDetailRoom: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
@@ -315,7 +316,8 @@ fun Phong(
                         }
                     },
                     onAssetRoom,
-                    onCreateContract
+                    onCreateContract,
+                    onDetailRoom
                 )
             }
         }

@@ -47,7 +47,8 @@ fun In4(
     onEditRoom: () -> Unit,
     onCloseBottomSheet: () -> Unit,
     onAssetRoom: () -> Unit,
-    onCreateContract:() ->  Unit
+    onCreateContract:() ->  Unit,
+    onDetailRoom: () -> Unit
 ) {
     var isConfirmDialogVisible by remember { mutableStateOf(false) }
 
@@ -98,7 +99,11 @@ fun In4(
             ) {
                 Ktra(
                     painterResource(id = R.drawable.baseline_remove_red_eye_24),
-                    "Xem chi tiết phòng"
+                    "Xem chi tiết phòng",
+                    onClick = {
+                        onCloseBottomSheet()
+                        onDetailRoom()
+                    }
                 )
                 Box(
                     modifier = Modifier

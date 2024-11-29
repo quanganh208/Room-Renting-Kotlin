@@ -38,6 +38,7 @@ import com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator.compon
 import com.itptit.roomrenting.presentation.other.AssetScreen
 import com.itptit.roomrenting.presentation.other.ContractScreen
 import com.itptit.roomrenting.presentation.other.InvoiceScreen
+import com.itptit.roomrenting.presentation.room.ChiTietPhong
 import com.itptit.roomrenting.presentation.room.CreateRoomScreen
 import com.itptit.roomrenting.presentation.room.CreateRoomViewModel
 import com.itptit.roomrenting.presentation.room.RoomScreen
@@ -237,6 +238,10 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 CreateContractScreen(navController = navController, roomId = roomId ?: "")
             }
 
+            composable(route = "${Route.DetailRoomScreen.route}/{roomId}") { backStackEntry ->
+                val roomId = backStackEntry.arguments?.getString("roomId")
+                ChiTietPhong()
+            }
         }
     }
 }

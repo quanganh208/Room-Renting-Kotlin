@@ -1,8 +1,10 @@
 package com.itptit.roomrenting.presentation.room.asset
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +51,32 @@ fun TaiSan(tenTaiSan: String, imageUrl: String, onDelete: () -> Unit, onEdit: ()
     var showDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
+    val showDialogImage = remember { mutableStateOf(false) }
+
+    // Hiện ảnh
+    if (showDialogImage.value) {
+        AlertDialog(
+            onDismissRequest = { showDialogImage.value = false },
+            title = { Text(text = tenTaiSan) },
+            text = {
+
+                Column {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = imageUrl),
+                        contentDescription = "Image in Dialog",
+                        modifier = Modifier.size(150.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showDialogImage.value = false }
+                ) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 
     if (showDialog) {
         AlertDialog(
@@ -74,9 +103,10 @@ fun TaiSan(tenTaiSan: String, imageUrl: String, onDelete: () -> Unit, onEdit: ()
     }
     Box(
         modifier = Modifier
-            .border(BorderStroke(1.dp, Color(0xffeeeeee)), shape = RoundedCornerShape(16.dp))
+            .border(BorderStroke(2.dp, Color(0xffeeeeee)), shape = RoundedCornerShape(16.dp))
             .fillMaxWidth()
             .background(Color.White, shape = RoundedCornerShape(16.dp))
+            .clickable { showDialogImage.value = true }
     ) {
         Row(
             modifier = Modifier
