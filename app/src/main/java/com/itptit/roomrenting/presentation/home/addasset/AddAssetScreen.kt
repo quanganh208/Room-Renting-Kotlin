@@ -105,7 +105,8 @@ fun AddAssetScreen(
     navController: NavController,
     viewModel: AddAssetViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     roomId: String,
-    nameRoom: String
+    nameRoom: String,
+    assetId: String
 ) {
     var text by remember { mutableStateOf("") }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -126,7 +127,7 @@ fun AddAssetScreen(
 
     FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
     Scaffold(
-        topBar = { AddAssetTopBar(navController, nameRoom) },
+        topBar = { AddAssetTopBar(navController, nameRoom, assetId) },
         modifier = Modifier
             .fillMaxSize()
             .padding(WindowInsets.safeDrawing.asPaddingValues())
@@ -183,11 +184,11 @@ fun AddAssetScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
                     onClick = {
-                        viewModel.createAsset(
-                            roomId = roomId,
-                            imageUrl = selectedImageUri,
-                            name = text
-                        )
+                        if (assetId == "0") {
+                            viewModel.createAsset(roomId, selectedImageUri, text)
+                        } else {
+                            viewModel.updateAsset(roomId, assetId, selectedImageUri, text)
+                        }
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -195,7 +196,10 @@ fun AddAssetScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                     shape = RoundedCornerShape(4.dp)
                 ) {
-                    Text(text = "+ Thêm tài sản", color = Color.White)
+                    Text(
+                        text = if (assetId == "0") "+ Thêm tài sản" else "Cập nhật tài sản",
+                        color = Color.White
+                    )
                 }
             }
         }
@@ -266,7 +270,7 @@ fun ImagePickerSection(selectedImageUri: Uri?, onPickImage: () -> Unit) {
 }
 
 @Composable
-fun AddAssetTopBar(navController: NavController, roomName: String) {
+fun AddAssetTopBar(navController: NavController, roomName: String, assetId: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -300,7 +304,7 @@ fun AddAssetTopBar(navController: NavController, roomName: String) {
             // Tiêu đề và phụ đề
             Column {
                 Text(
-                    text = "Thêm tài sản",
+                    text = if (assetId == "0") "Thêm tài sản" else "Chỉnh sửa tài sản",
                     color = Color.Black,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold // Đậm cho tiêu đề

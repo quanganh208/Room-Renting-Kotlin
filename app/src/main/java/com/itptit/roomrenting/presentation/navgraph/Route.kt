@@ -18,7 +18,7 @@ sealed class Route(
 
     object AddressLocationScreen : Route(route = "addressLocationScreen")
 
-    object AddAssetScreen : Route(route = "addAssetScreen/{roomId}/{nameRoom}")
+    object AddAssetScreen : Route(route = "addAssetScreen/{roomId}/{nameRoom}/{assetId}")
 
     object AddContractScreen : Route(route = "addContractScreen")
 

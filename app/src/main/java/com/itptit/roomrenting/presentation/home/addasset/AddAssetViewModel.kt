@@ -82,6 +82,38 @@ class AddAssetViewModel : ViewModel() {
         }
     }
 
+    fun updateAsset(
+        roomId: String,
+        assetId: String,
+        imageUrl: Uri?,
+        name: String
+    ) {
+        _isLoading.value = true
+        uploadImageToFirebase(imageUrl) { downloadUrl ->
+            val request = AssetRequest(downloadUrl, name)
+            ApiClient.assetService.updateAsset(roomId, assetId, request)
+                .enqueue(object : Callback<AssetResponse> {
+                    override fun onResponse(
+                        call: Call<AssetResponse>,
+                        response: Response<AssetResponse>
+                    ) {
+                        _isLoading.value = false
+                        if (response.isSuccessful) {
+                            _result.value = "Cập nhật tài sản thành công"
+                        } else {
+                            _result.value =
+                                "Cập nhật tài sản thất bại: ${if (response.code() == 400) "Sai thông tin" else "Lỗi không xác định"}"
+                        }
+                    }
+
+                    override fun onFailure(call: Call<AssetResponse>, t: Throwable) {
+                        _isLoading.value = false
+                        _result.value = "Cập nhật tài sản thất bại: ${t.message}"
+                    }
+                })
+        }
+    }
+
     sealed class UploadState {
         object Idle : UploadState()
         object Loading : UploadState()

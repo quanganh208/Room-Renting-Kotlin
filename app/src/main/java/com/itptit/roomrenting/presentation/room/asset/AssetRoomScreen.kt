@@ -42,10 +42,14 @@ import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
-fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController, viewModel: AssetRoomViewModel) {
+fun QLTaiSan(
+    roomId: String,
+    nameRoom: String,
+    navController: NavController,
+    viewModel: AssetRoomViewModel
+) {
     val assets by viewModel.assets.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
 
     LaunchedEffect(roomId) {
         viewModel.getAllAssets(roomId)
@@ -106,12 +110,18 @@ fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController, vie
                     .border(BorderStroke(1.dp, Color(0xffecf0f3)))
             )
 
-            LazyTaiSan(taisans = assets)
+            LazyTaiSan(
+                taisans = assets,
+                navController = navController,
+                roomId = roomId,
+                nameRoom = nameRoom,
+                viewModel = viewModel
+            )
         }
 
         FloatingActionButton(
             onClick = {
-                navController.navigate("${Route.AddAssetScreen.route}/$roomId/$nameRoom")
+                navController.navigate("${Route.AddAssetScreen.route}/$roomId/$nameRoom/0")
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -129,8 +139,13 @@ fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController, vie
 }
 
 @Composable
-fun LazyTaiSan(taisans: List<Data> = listOf()) {
-
+fun LazyTaiSan(
+    taisans: List<Data> = listOf(),
+    navController: NavController,
+    roomId: String,
+    nameRoom: String,
+    viewModel: AssetRoomViewModel
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,9 +156,14 @@ fun LazyTaiSan(taisans: List<Data> = listOf()) {
             val taisan = taisans[index]
             TaiSan(
                 tenTaiSan = taisan.name,
-                imageUrl = taisan.imageUrl
+                imageUrl = taisan.imageUrl,
+                onDelete = {
+                    viewModel.deleteAsset(roomId, taisan.id.toString())
+                },
+                onEdit = {
+                    navController.navigate("${Route.AddAssetScreen.route}/$roomId/$nameRoom/${taisan.id}")
+                },
             )
         }
     }
-
 }

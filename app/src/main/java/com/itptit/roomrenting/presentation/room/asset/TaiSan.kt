@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,9 +28,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,26 +44,65 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaiSan(tenTaiSan: String, imageUrl: String) {
-    Box(modifier = Modifier
-        .border(BorderStroke(1.dp,Color(0xffeeeeee)), shape = RoundedCornerShape(16.dp))
-        .fillMaxWidth()
-        .background(Color.White, shape = RoundedCornerShape(16.dp))){
-        Row(modifier = Modifier.fillMaxWidth().padding(16.dp),
+fun TaiSan(tenTaiSan: String, imageUrl: String, onDelete: () -> Unit, onEdit: () -> Unit) {
+    var showDialog by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    val coroutineScope = rememberCoroutineScope()
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Xác nhận xoá") },
+            text = { Text(text = "Bạn có chắc chắn muốn xoá tài sản này không?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    coroutineScope.launch {
+                        sheetState.hide()
+                    }
+                    onDelete()
+                    showDialog = false
+                }) {
+                    Text("Xoá")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Huỷ")
+                }
+            }
+        )
+    }
+    Box(
+        modifier = Modifier
+            .border(BorderStroke(1.dp, Color(0xffeeeeee)), shape = RoundedCornerShape(16.dp))
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(16.dp))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically){
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(modifier = Modifier.size(55.dp)
-                    .border(BorderStroke(1.dp, Color(0xffa2a2a2)),
-                        shape = CircleShape),
+                Box(
+                    modifier = Modifier
+                        .size(55.dp)
+                        .border(
+                            BorderStroke(1.dp, Color(0xffa2a2a2)),
+                            shape = CircleShape
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         painter = rememberAsyncImagePainter(model = imageUrl),
                         contentDescription = "",
                         tint = Color.Unspecified,
-                        modifier = Modifier.size(40.dp).clip(CircleShape)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
                     )
                 }
 
@@ -68,15 +110,16 @@ fun TaiSan(tenTaiSan: String, imageUrl: String) {
                 Text(text = tenTaiSan, fontWeight = FontWeight.Bold)
             }
 
-            Box(modifier = Modifier
-                .size(45.dp)
-                .background(Color(0xffeeeeee), shape = CircleShape)) {
-                val sheetState = rememberModalBottomSheetState()
-                val coroutineScope = rememberCoroutineScope()
+            Box(
+                modifier = Modifier
+                    .size(45.dp)
+                    .background(Color(0xffeeeeee), shape = CircleShape)
+            ) {
+
 
                 val isSheetOpen = remember { mutableStateOf(false) }
                 IconButton(onClick = {
-                    coroutineScope.launch{
+                    coroutineScope.launch {
                         sheetState.show()
                     }
                 }) {
@@ -102,11 +145,13 @@ fun TaiSan(tenTaiSan: String, imageUrl: String) {
                                 .background(Color.White, shape = RoundedCornerShape(16.dp)),
                         ) {
                             Row {
-                                TextButton(onClick = {}) {
-                                    Box(modifier = Modifier
-                                        .size(40.dp)
-                                        .background(Color(0xffe3f5e3), shape = CircleShape),
-                                        contentAlignment = Alignment.Center) {
+                                TextButton(onClick = { onEdit() }) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .background(Color(0xffe3f5e3), shape = CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
                                         Icon(
                                             Icons.Default.Edit,
                                             contentDescription = "",
@@ -114,21 +159,31 @@ fun TaiSan(tenTaiSan: String, imageUrl: String) {
                                         )
                                     }
                                     Spacer(modifier = Modifier.width(20.dp))
-                                    Text(text = "Chỉnh sửa: $tenTaiSan",
+                                    Text(
+                                        text = "Chỉnh sửa: $tenTaiSan",
                                         color = Color.Black,
-                                        fontWeight = FontWeight.Bold)
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
 
-                            Box(modifier = Modifier.fillMaxWidth().height(1.dp)
-                                .border(BorderStroke(1.dp,Color.Gray)))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(1.dp)
+                                    .border(BorderStroke(1.dp, Color.Gray))
+                            )
 
                             Row {
-                                TextButton(onClick = {}) {
-                                    Box(modifier = Modifier
-                                        .size(40.dp)
-                                        .background(Color(0xfff6e8e8), shape = CircleShape),
-                                        contentAlignment = Alignment.Center){
+                                TextButton(onClick = {
+                                    showDialog = true
+                                }) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .background(Color(0xfff6e8e8), shape = CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = "",
@@ -136,9 +191,11 @@ fun TaiSan(tenTaiSan: String, imageUrl: String) {
                                         )
                                     }
                                     Spacer(modifier = Modifier.width(20.dp))
-                                    Text(text = "Xóa: $tenTaiSan",
+                                    Text(
+                                        text = "Xóa: $tenTaiSan",
                                         color = Color.Black,
-                                        fontWeight = FontWeight.Bold)
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
 
