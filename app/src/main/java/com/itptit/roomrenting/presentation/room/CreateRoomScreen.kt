@@ -66,6 +66,22 @@ fun CreateRoomScreen(
     var isDialogVisible by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
+    LaunchedEffect(roomId) {
+        if (roomId != "0") {
+            viewModel.getRoomById(houseId, roomId)
+        }
+    }
+
+    val room by viewModel.room.collectAsState()
+
+    LaunchedEffect(room) {
+        if (roomId != "0") {
+            name = room.data.name
+            capacity = room.data.capacity.toString()
+            description = room.data.description
+        }
+    }
+
     LaunchedEffect(result) {
         if (result.isNotEmpty()) {
             isDialogVisible = true
@@ -390,7 +406,10 @@ fun TwoButtonsRow(
 }
 
 @Composable
-fun Note(string1: String, string2: String) {
+fun Note(
+    string1: String,
+    string2: String
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

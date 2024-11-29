@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -58,9 +60,11 @@ import com.itptit.roomrenting.presentation.navgraph.Route
 fun RoomRented(viewModel: RoomViewModel, houseId: Int, navController: NavController) {
     val rooms =
         viewModel.rooms.collectAsState().value.data.filter { it.isCurrentlyRented }.toMutableList()
-    Box(
+    Column(
         modifier = Modifier
             .background(color = Color(0xffe6f2ee))
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         rooms.forEach {
             Phong(
@@ -83,9 +87,11 @@ fun RoomRented(viewModel: RoomViewModel, houseId: Int, navController: NavControl
 @Composable
 fun AllRoomRent(viewModel: RoomViewModel, houseId: Int, navController: NavController) {
     val rooms = viewModel.rooms.collectAsState().value.data.toMutableList()
-    Box(
+    Column(
         modifier = Modifier
             .background(color = Color(0xffe6f2ee))
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         rooms.forEach {
             Phong(

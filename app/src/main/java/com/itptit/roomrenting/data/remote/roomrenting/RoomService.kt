@@ -15,6 +15,12 @@ interface RoomService {
     @GET("owner/houses/{houseId}/rooms")
     fun getRoom(@Path("houseId") houseId: String): Call<AllRoomResponse>
 
+    @GET("owner/houses/{houseId}/rooms/{roomId}")
+    fun getRoomById(
+        @Path("houseId") houseId: String,
+        @Path("roomId") roomId: String
+    ): Call<RoomResponse>
+
     @POST("owner/houses/{houseId}/rooms")
     fun createRoom(
         @Path("houseId") houseId: String,
