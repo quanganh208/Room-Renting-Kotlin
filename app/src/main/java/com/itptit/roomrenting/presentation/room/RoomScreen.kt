@@ -17,10 +17,11 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,8 +34,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,47 +55,40 @@ import com.itptit.roomrenting.presentation.navgraph.Route
 
 
 @Composable
-fun RoomRented(viewModel: RoomViewModel) {
-    val rooms = viewModel.rooms.collectAsState().value.data.filter { it.isCurrentlyRented }
+fun RoomRented(viewModel: RoomViewModel, houseId: Int) {
+    val rooms =
+        viewModel.rooms.collectAsState().value.data.filter { it.isCurrentlyRented }.toMutableList()
     Box(
         modifier = Modifier
             .background(color = Color(0xffe6f2ee))
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
-        ) {
-            items(rooms.size) { index ->
-                Phong(room = rooms[index])
-                Spacer(modifier = Modifier.height(15.dp))
-            }
+        rooms.forEach {
+            Phong(room = it, onDeleteRoom = {
+                viewModel.deleteRoom(houseId.toString(), it.id.toString())
+            })
+            Spacer(modifier = Modifier.height(15.dp))
         }
     }
 }
 
 @Composable
-fun AllRoomRent(viewModel: RoomViewModel) {
-    val rooms = viewModel.rooms.collectAsState().value.data
+fun AllRoomRent(viewModel: RoomViewModel, houseId: Int) {
+    val rooms = viewModel.rooms.collectAsState().value.data.toMutableList()
     Box(
         modifier = Modifier
             .background(color = Color(0xffe6f2ee))
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
-        ) {
-            items(rooms.size) { index ->
-                Phong(room = rooms[index])
-                Spacer(modifier = Modifier.height(15.dp))
-            }
+        rooms.forEach {
+            Phong(room = it, onDeleteRoom = {
+                viewModel.deleteRoom(houseId.toString(), it.id.toString())
+            })
+            Spacer(modifier = Modifier.height(15.dp))
         }
     }
 }
 
 @Composable
-fun TabNavigationExample(viewModel: RoomViewModel) {
+fun TabNavigationExample(viewModel: RoomViewModel, houseId: Int) {
     val tabs = listOf("Toàn bộ phòng", "Đã cho thuê")
     val selectedTab = remember { mutableIntStateOf(0) }
 
@@ -138,8 +135,8 @@ fun TabNavigationExample(viewModel: RoomViewModel) {
         ) {
 
             when (selectedTab.intValue) {
-                0 -> AllRoomRent(viewModel = viewModel)
-                1 -> RoomRented(viewModel = viewModel)
+                0 -> AllRoomRent(viewModel = viewModel, houseId = houseId)
+                1 -> RoomRented(viewModel = viewModel, houseId = houseId)
             }
         }
     }
@@ -152,13 +149,22 @@ fun RoomScreen(
     houseName: String,
     viewModel: RoomViewModel
 ) {
+    val isLoading by viewModel.isLoading.collectAsState()
+    val result by viewModel.result.collectAsState()
+    var isDialogVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.getRooms(houseId.toString())
     }
 
+    LaunchedEffect(result) {
+        if (result.isNotEmpty()) {
+            isDialogVisible = true
+        }
+    }
+
+    FullScreenLoadingModal(isVisible = isLoading)
     Box(modifier = Modifier.fillMaxSize()) {
-        FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -220,7 +226,7 @@ fun RoomScreen(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
-                TabNavigationExample(viewModel)
+                TabNavigationExample(viewModel, houseId)
             }
 
         }
@@ -240,6 +246,25 @@ fun RoomScreen(
                 contentDescription = "Add",
                 tint = Color.White,
                 modifier = Modifier.size(40.dp)
+            )
+        }
+
+        if (isDialogVisible) {
+            AlertDialog(
+                onDismissRequest = { isDialogVisible = false },
+                title = { Text("Thông báo") },
+                text = { Text(result) },
+                confirmButton = {
+                    Button(onClick = {
+                        isDialogVisible = false
+                        if (result.contains("thành công")) {
+                            viewModel.getRooms(houseId.toString())
+                        }
+                        viewModel.updateResult("")
+                    }) {
+                        Text("OK")
+                    }
+                }
             )
         }
     }

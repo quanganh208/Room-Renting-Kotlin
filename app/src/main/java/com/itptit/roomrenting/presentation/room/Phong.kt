@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Phong(room: Data) {
+fun Phong(room: Data, onDeleteRoom: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     val isSheetOpen = remember { mutableStateOf(false) }
@@ -60,7 +60,9 @@ fun Phong(room: Data) {
         modifier = Modifier
             .fillMaxWidth()
 //            .height(220.dp)
-            .background(color = Color.White, shape = RoundedCornerShape(16.dp)),
+            .background(color = Color.White, shape = RoundedCornerShape(16.dp))
+            .padding(8.dp)
+        ,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
             contentColor = Color.Black
@@ -300,7 +302,7 @@ fun Phong(room: Data) {
                 modifier = Modifier
                     .background(color = Color(0xfffefefe))
             ) {
-                In4(room)
+                In4(room, onDeleteRoom)
             }
         }
     }

@@ -17,11 +17,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,7 +41,9 @@ import com.itptit.roomrenting.R
 import com.itptit.roomrenting.domain.model.room.Data
 
 @Composable
-fun In4(room: Data) {
+fun In4(room: Data, onDeleteRoom: () -> Unit) {
+    var isConfirmDialogVisible by remember { mutableStateOf(false) }
+
     Column {
         Row(
             modifier = Modifier
@@ -120,21 +127,48 @@ fun In4(room: Data) {
                         .border(BorderStroke(10.dp, color = Color(0xffe2e2e2)))
                 ) {
                 }
-                Ktra(painterResource(id = R.drawable.baseline_settings_24), "Thiết lập dịch vụ")
+                Ktra(
+                    painterResource(id = R.drawable.ic_trash),
+                    "Xóa phòng",
+                    onClick = {
+                        isConfirmDialogVisible = true
+                    })
             }
         }
     }
+
+    if (isConfirmDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { isConfirmDialogVisible = false },
+            title = { Text("Xác nhận xoá phòng") },
+            text = { Text("Bạn có chắc chắn muốn xoá phòng này không?") },
+            confirmButton = {
+                Button(onClick = {
+                    isConfirmDialogVisible = false
+                    onDeleteRoom()
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { isConfirmDialogVisible = false }) {
+                    Text("Huỷ")
+                }
+            }
+        )
+    }
 }
 
+
 @Composable
-fun Ktra(painter: Painter, string: String) {
+fun Ktra(painter: Painter, string: String, onClick: () -> Unit = {}) {
     Box {
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
                 .background(color = Color(0xfffefefe)),
-            onClick = {},
+            onClick = { onClick() },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xfffefefe)
             )
