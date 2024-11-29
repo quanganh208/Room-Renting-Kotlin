@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import com.itptit.roomrenting.R
 import com.itptit.roomrenting.domain.model.FileInfo
 
+
 @Composable
 fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
     var text by remember { mutableStateOf("") } // Quản lý giá trị nhập
