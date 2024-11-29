@@ -1,9 +1,7 @@
 package com.itptit.roomrenting.presentation.navgraph.roomrenting_navigator
 
-import android.os.Build
 import com.itptit.roomrenting.presentation.home.rentalhouse.RentalHouseViewModel
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -43,6 +41,7 @@ import com.itptit.roomrenting.presentation.room.CreateRoomScreen
 import com.itptit.roomrenting.presentation.room.CreateRoomViewModel
 import com.itptit.roomrenting.presentation.room.RoomScreen
 import com.itptit.roomrenting.presentation.room.RoomViewModel
+import com.itptit.roomrenting.presentation.room.asset.AssetRoomViewModel
 import com.itptit.roomrenting.presentation.room.asset.QLTaiSan
 import com.itptit.roomrenting.presentation.service.AddServiceScreen
 import com.itptit.roomrenting.presentation.service.ServiceScreen
@@ -163,10 +162,12 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
             composable(route = "${Route.AssetRoomScreen.route}/{roomId}/{nameRoom}") { backStackEntry ->
                 val roomId = backStackEntry.arguments?.getString("roomId")
                 val nameRoom = backStackEntry.arguments?.getString("nameRoom")
+                val viewModel: AssetRoomViewModel = hiltViewModel()
                 QLTaiSan(
                     roomId = roomId ?: "",
                     nameRoom = nameRoom ?: "",
-                    navController = navController
+                    navController = navController,
+                    viewModel = viewModel
                 )
             }
 

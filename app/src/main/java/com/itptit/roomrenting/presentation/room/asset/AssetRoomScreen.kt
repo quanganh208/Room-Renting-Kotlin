@@ -26,6 +26,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,10 +37,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.itptit.roomrenting.R
+import com.itptit.roomrenting.domain.model.asset.Data
+import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
-fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController) {
+fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController, viewModel: AssetRoomViewModel) {
+    val assets by viewModel.assets.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
+
+    LaunchedEffect(roomId) {
+        viewModel.getAllAssets(roomId)
+    }
+
+
+    FullScreenLoadingModal(isVisible = isLoading)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +106,7 @@ fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController) {
                     .border(BorderStroke(1.dp, Color(0xffecf0f3)))
             )
 
-            LazyTaiSan()
+            LazyTaiSan(taisans = assets)
         }
 
         FloatingActionButton(
@@ -114,22 +129,7 @@ fun QLTaiSan(roomId: String, nameRoom: String, navController: NavController) {
 }
 
 @Composable
-fun LazyTaiSan() {
-
-    val taisans = listOf(
-        Taisan(
-            tenTaiSan = "Tủ lạnh",
-            imageUrl = "https://cdn.tgdd.vn/Products/Images/1943/326891/tu-lanh-aqua-inverter-358-lit-aqr-t410fa-wgb-1-700x467.jpg",
-        ),
-        Taisan(
-            tenTaiSan = "Máy giặt",
-            imageUrl = "https://cdn.tgdd.vn/Products/Images/1943/326891/tu-lanh-aqua-inverter-358-lit-aqr-t410fa-wgb-1-700x467.jpg",
-        ),
-        Taisan(
-            tenTaiSan = "Điều hòa",
-            imageUrl = "https://cdn.tgdd.vn/Products/Images/1943/326891/tu-lanh-aqua-inverter-358-lit-aqr-t410fa-wgb-1-700x467.jpg",
-        )
-    )
+fun LazyTaiSan(taisans: List<Data> = listOf()) {
 
     LazyColumn(
         modifier = Modifier
@@ -140,7 +140,7 @@ fun LazyTaiSan() {
         items(taisans.size) { index ->
             val taisan = taisans[index]
             TaiSan(
-                tenTaiSan = taisan.tenTaiSan,
+                tenTaiSan = taisan.name,
                 imageUrl = taisan.imageUrl
             )
         }

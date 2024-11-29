@@ -1,6 +1,7 @@
 package com.itptit.roomrenting.data.remote.roomrenting
 
 import com.itptit.roomrenting.data.remote.dto.asset.AllAssetResponse
+import com.itptit.roomrenting.data.remote.dto.asset.AssetRequest
 import com.itptit.roomrenting.data.remote.dto.asset.AssetResponse
 import com.itptit.roomrenting.data.remote.dto.house.HouseRequest
 import retrofit2.Call
@@ -23,14 +24,14 @@ interface AssetService {
 
     @POST("/owner/rooms/{roomId}/assets")
     fun createAsset(
-        @Path("roomId") roomId: String, @Body request: HouseRequest
+        @Path("roomId") roomId: String, @Body request: AssetRequest
     ): Call<AssetResponse>
 
     @PUT("/owner/rooms/{roomId}/assets/{assetId}")
     fun updateAsset(
         @Path("roomId") roomId: String,
         @Path("assetId") assetId: String,
-        @Body request: HouseRequest
+        @Body request: AssetRequest
     ): Call<AssetResponse>
 
     @DELETE("/owner/rooms/{roomId}/assets/{assetId}")

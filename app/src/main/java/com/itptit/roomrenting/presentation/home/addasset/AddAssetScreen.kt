@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,14 +28,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.itptit.roomrenting.presentation.navgraph.Route
 
 @Composable
-fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
+fun InputField(
+    title: String,
+    hint: String,
+    modifier: Modifier = Modifier,
+    onValueChange: (String) -> Unit = {}
+) {
     var text by remember { mutableStateOf("") } // Quản lý giá trị nhập
     var isFocused by remember { mutableStateOf(false) } // Trạng thái focus
 
@@ -71,7 +80,10 @@ fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
         ) {
             TextField(
                 value = text,
-                onValueChange = { text = it },
+                onValueChange = {
+                    text = it
+                    onValueChange(it)
+                },
                 placeholder = { Text(text = hint, color = Color.Gray) }, // Placeholder màu xám
                 modifier = Modifier
                     .fillMaxSize()
@@ -89,20 +101,42 @@ fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), roomId: String, nameRoom: String) {
-    val uploadState by viewModel.uploadState.collectAsState()
+fun AddAssetScreen(
+    navController: NavController,
+    viewModel: AddAssetViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    roomId: String,
+    nameRoom: String
+) {
+    var text by remember { mutableStateOf("") }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var isDialogVisible by remember { mutableStateOf(false) }
+    val result by viewModel.result.collectAsState()
+    val focusManager = LocalFocusManager.current
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        selectedImageUri = uri
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            selectedImageUri = uri
+        }
+
+    LaunchedEffect(result) {
+        if (result.isNotEmpty()) {
+            isDialogVisible = true
+        }
     }
 
-    FullScreenLoadingModal(isVisible = uploadState is AddAssetViewModel.UploadState.Loading)
+    FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
     Scaffold(
         topBar = { AddAssetTopBar(navController, nameRoom) },
         modifier = Modifier
             .fillMaxSize()
             .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .clickable(
+                onClick = {
+                    focusManager.clearFocus()
+                },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -113,7 +147,10 @@ fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Input field for the asset name
-            InputField(title = "Tên tài sản*", hint = "Ví dụ: Tủ lạnh")
+            InputField(
+                title = "Tên tài sản*",
+                hint = "Ví dụ: Tủ lạnh",
+                onValueChange = { text = it })
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -125,7 +162,6 @@ fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = 
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Rest of the UI components
             Spacer(modifier = Modifier.weight(1f))
 
             Row(
@@ -136,7 +172,9 @@ fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = 
             ) {
                 Button(
                     onClick = { navController.popBackStack() },
-                    modifier = Modifier.weight(1f).height(48.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
                     shape = RoundedCornerShape(4.dp)
                 ) {
@@ -144,39 +182,40 @@ fun AddAssetScreen(navController: NavController, viewModel: AddAssetViewModel = 
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Button(
-                    onClick = { viewModel.uploadImageToFirebase(selectedImageUri) },
-                    modifier = Modifier.weight(1f).height(48.dp),
+                    onClick = {
+                        viewModel.createAsset(
+                            roomId = roomId,
+                            imageUrl = selectedImageUri,
+                            name = text
+                        )
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                     shape = RoundedCornerShape(4.dp)
                 ) {
                     Text(text = "+ Thêm tài sản", color = Color.White)
                 }
             }
+        }
 
-            when (uploadState) {
-                is AddAssetViewModel.UploadState.Loading -> {
-                    Text(
-                        text = "Đang tải ảnh lên...",
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        color = Color.Gray
-                    )
+        if (isDialogVisible) {
+            AlertDialog(
+                onDismissRequest = { isDialogVisible = false },
+                title = { Text("Thông báo") },
+                text = { Text(result) },
+                confirmButton = {
+                    Button(onClick = {
+                        isDialogVisible = false
+                        if ("thành công" in result) {
+                            navController.popBackStack()
+                        }
+                    }) {
+                        Text("OK")
+                    }
                 }
-                is AddAssetViewModel.UploadState.Success -> {
-                    Text(
-                        text = "Tải lên thành công: ${(uploadState as AddAssetViewModel.UploadState.Success).downloadUrl}",
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        color = Color.Green
-                    )
-                }
-                is AddAssetViewModel.UploadState.Error -> {
-                    Text(
-                        text = "Lỗi: ${(uploadState as AddAssetViewModel.UploadState.Error).message}",
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        color = Color.Red
-                    )
-                }
-                else -> {}
-            }
+            )
         }
     }
 }

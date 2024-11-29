@@ -39,11 +39,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.launch
 
-data class Taisan(
-    val tenTaiSan: String,
-    val imageUrl: String
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaiSan(tenTaiSan: String, imageUrl: String) {
