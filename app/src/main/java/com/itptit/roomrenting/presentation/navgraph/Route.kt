@@ -42,7 +42,7 @@ sealed class Route(
 
     object UserInformationScreen: Route(route = "userInformationScreen")
 
-    object CreateContractScreen: Route(route = "createContractScreen/{roomId}")
+    object CreateContractScreen: Route(route = "createContractScreen/{roomId}/{roomName}")
 
     object DetailRoomScreen : Route(route = "detailRoomScreen/{roomId}")
 

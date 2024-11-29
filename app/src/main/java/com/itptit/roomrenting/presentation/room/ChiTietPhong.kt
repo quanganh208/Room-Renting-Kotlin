@@ -32,6 +32,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +45,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.itptit.roomrenting.domain.model.room.Data
+import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
 
 @Composable
 fun TopNavigationBar(
@@ -85,7 +90,7 @@ fun TopNavigationBar(
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(room: Data) {
     var selectedTab by remember { mutableStateOf(0) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -100,7 +105,7 @@ fun MainScreen() {
                 .fillMaxSize()
         ) {
             when (selectedTab) {
-                0 -> thongtin("Phong 1 - #105108", "Đang trống", 1000.000, "10")
+                0 -> thongtin(room)
                 1 -> Text(text = "Nội dung tab Hóa đơn", fontSize = 20.sp)
                 2 -> Text(text = "Nội dung tab Lịch sử", fontSize = 20.sp)
             }
@@ -109,7 +114,7 @@ fun MainScreen() {
 }
 
 @Composable
-fun thongtin(name: String, status: String, price: Double, max_occupants: String) {
+fun thongtin(room: Data) {
     LazyColumn {
         item {
             Box(
@@ -126,11 +131,11 @@ fun thongtin(name: String, status: String, price: Double, max_occupants: String)
                 ) {
                     Column {
                         Text(
-                            text = "Mã kết nối phòng - Dành cho APP khách thuê",
+                            text = "Mã kết nối phòng",
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp
                         )
-                        Text(text = name, fontSize = 13.sp)
+                        Text(text = "Phòng ${room.name} - #${room.id}", fontSize = 13.sp)
                     }
                     Box(
                         modifier = Modifier
@@ -149,10 +154,18 @@ fun thongtin(name: String, status: String, price: Double, max_occupants: String)
                             Box(
                                 modifier = Modifier
                                     .size(10.dp)
-                                    .background(Color(0xffe6610e), shape = CircleShape)
+                                    .background(
+                                        if (room.isCurrentlyRented) Color(0xFF03A9F4) else Color(
+                                            0xffe56307
+                                        ), shape = CircleShape
+                                    )
                             )
                             Spacer(modifier = Modifier.width(5.dp))
-                            Text(text = status, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            Text(
+                                text = if (room.isCurrentlyRented) "Đã cho thuê" else "Đang trống",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp
+                            )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Row(
@@ -244,7 +257,7 @@ fun thongtin(name: String, status: String, price: Double, max_occupants: String)
                             .height(1.dp)
                             .border(BorderStroke(1.dp, Color(0xffcacaca)))
                     ) {}
-                    GridWithEqualBoxesManual()
+                    GridWithEqualBoxesManual(room)
 
 
                 }
@@ -252,9 +265,11 @@ fun thongtin(name: String, status: String, price: Double, max_occupants: String)
         }
 
         item {
-            Box(modifier = Modifier
-                .background(Color.White)
-                .padding(10.dp)) {
+            Box(
+                modifier = Modifier
+                    .background(Color.White)
+                    .padding(10.dp)
+            ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
@@ -432,9 +447,11 @@ fun thongtin(name: String, status: String, price: Double, max_occupants: String)
         }
 
         item {
-            Box(modifier = Modifier
-                .background(Color.White)
-                .padding(10.dp)) {
+            Box(
+                modifier = Modifier
+                    .background(Color.White)
+                    .padding(10.dp)
+            ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
@@ -499,15 +516,11 @@ data class tmp(
 )
 
 @Composable
-fun GridWithEqualBoxesManual() {
+fun GridWithEqualBoxesManual(room: Data) {
 
     val list = listOf(
-        tmp("Tên phòng", "Phòng 1"),
-        tmp("Nhóm", "Tầng Triệt"),
-        tmp("Giá thuê", "1.000.000đ"),
-        tmp("Diện tích", "15 m2"),
-        tmp("Giới tính ưu tiên", "Tất cả"),
-        tmp("Ngày lập hóa đơn", "Ngày 20")
+        tmp("Tên phòng", "Phòng ${room.name}"),
+        tmp("Số người ở tối đa", "${room.capacity} người"),
     )
 
     Column(
@@ -563,7 +576,19 @@ fun GridWithEqualBoxesManual() {
 
 
 @Composable
-fun ChiTietPhong() {
+fun ChiTietPhong(
+    navController: NavController,
+    houseId: String,
+    roomId: String,
+    viewModel: ChiTietPhongViewModel
+) {
+    val room by viewModel.room.collectAsState()
+
+    LaunchedEffect(roomId) {
+        viewModel.getRoomById(houseId, roomId)
+    }
+
+    FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -586,7 +611,7 @@ fun ChiTietPhong() {
                         .border(BorderStroke(1.dp, Color(0xffcacaca)), shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "",
@@ -598,8 +623,8 @@ fun ChiTietPhong() {
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Column {
-                    Text(text = "Chi Tiết phòng", fontWeight = FontWeight.Bold)
-                    Text(text = "Phong 1 - #105108")
+                    Text(text = "Chi tiết phòng", fontWeight = FontWeight.Bold)
+                    Text(text = "Phòng ${room.data.name} - #${room.data.id}")
                 }
             }
 
@@ -610,7 +635,7 @@ fun ChiTietPhong() {
                     .border(BorderStroke(1.dp, Color(0xffcacaca)))
             ) {}
             Box(modifier = Modifier.background(Color(0xffebeff2))) {
-                MainScreen()
+                MainScreen(room.data)
             }
         }
         Box(

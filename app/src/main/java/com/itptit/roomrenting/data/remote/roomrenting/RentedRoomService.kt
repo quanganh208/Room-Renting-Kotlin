@@ -2,6 +2,7 @@ package com.itptit.roomrenting.data.remote.roomrenting
 
 import com.itptit.roomrenting.data.remote.dto.rented_room.AllRentedRoomResponse
 import com.itptit.roomrenting.data.remote.dto.rented_room.RentedRoomRequest
+import com.itptit.roomrenting.data.remote.dto.rented_room.RentedRoomResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,17 +18,17 @@ interface RentedRoomService {
     fun getRentedRoom(
         @Path("roomId") roomId: String,
         @Path("rentedRoomId") rentedRoomId: String
-    ): Call<RentedRoomService>
+    ): Call<RentedRoomResponse>
 
     @POST("/owner/rooms/{roomId}/rented-rooms")
     fun createRentedRoom(
         @Path("roomId") roomId: String,
         @Body request: RentedRoomRequest
-    ): Call<RentedRoomService>
+    ): Call<RentedRoomResponse>
 
     @DELETE("/owner/rooms/{roomId}/rented-rooms/{rentedRoomId}")
     fun deleteRentedRoom(
         @Path("roomId") roomId: String,
         @Path("rentedRoomId") rentedRoomId: String
-    ): Call<RentedRoomService>
+    ): Call<RentedRoomResponse>
 }

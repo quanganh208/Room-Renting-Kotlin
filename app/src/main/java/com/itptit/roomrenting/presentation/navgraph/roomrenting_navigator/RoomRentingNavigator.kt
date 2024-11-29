@@ -27,6 +27,7 @@ import com.itptit.roomrenting.presentation.home.addcontract.AddContractViewModel
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationScreen
 import com.itptit.roomrenting.presentation.home.addresslocation.AddressLocationViewModel
 import com.itptit.roomrenting.presentation.home.createcontract.CreateContractScreen
+import com.itptit.roomrenting.presentation.home.createcontract.CreateContractViewModel
 import com.itptit.roomrenting.presentation.home.main.HomeScreen
 import com.itptit.roomrenting.presentation.home.main.HomeViewModel
 import com.itptit.roomrenting.presentation.home.moreinfo.MoreInformationScreen
@@ -39,6 +40,7 @@ import com.itptit.roomrenting.presentation.other.AssetScreen
 import com.itptit.roomrenting.presentation.other.ContractScreen
 import com.itptit.roomrenting.presentation.other.InvoiceScreen
 import com.itptit.roomrenting.presentation.room.ChiTietPhong
+import com.itptit.roomrenting.presentation.room.ChiTietPhongViewModel
 import com.itptit.roomrenting.presentation.room.CreateRoomScreen
 import com.itptit.roomrenting.presentation.room.CreateRoomViewModel
 import com.itptit.roomrenting.presentation.room.RoomScreen
@@ -233,14 +235,30 @@ fun RoomRentingNavigator(sharedNavController: NavController) {
                 AddContractScreen(navController = navController, viewModel = viewModel)
             }
 
-            composable(route = "${Route.CreateContractScreen.route}/{roomId}") { backStackEntry ->
+            composable(route = "${Route.CreateContractScreen.route}/{roomId}/{roomName}") { backStackEntry ->
                 val roomId = backStackEntry.arguments?.getString("roomId")
-                CreateContractScreen(navController = navController, roomId = roomId ?: "")
+                val roomName = backStackEntry.arguments?.getString("roomName")
+                val viewModel: CreateContractViewModel = hiltViewModel()
+                OnBackClickStateSaver(navController)
+
+                CreateContractScreen(
+                    navController = navController,
+                    roomName = roomName ?: "",
+                    roomId = roomId ?: "",
+                    viewModel = viewModel
+                )
             }
 
-            composable(route = "${Route.DetailRoomScreen.route}/{roomId}") { backStackEntry ->
+            composable(route = "${Route.DetailRoomScreen.route}/{houseId}/{roomId}") { backStackEntry ->
+                val houseId = backStackEntry.arguments?.getString("houseId")
                 val roomId = backStackEntry.arguments?.getString("roomId")
-                ChiTietPhong()
+                val viewModel: ChiTietPhongViewModel = hiltViewModel()
+                ChiTietPhong(
+                    navController = navController,
+                    houseId = houseId ?: "",
+                    roomId = roomId ?: "",
+                    viewModel = viewModel
+                )
             }
         }
     }

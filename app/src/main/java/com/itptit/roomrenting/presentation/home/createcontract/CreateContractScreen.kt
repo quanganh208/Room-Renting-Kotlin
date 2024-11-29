@@ -1,112 +1,87 @@
 package com.itptit.roomrenting.presentation.home.createcontract
 
-import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import android.os.Bundle
 import android.provider.OpenableColumns
-import androidx.activity.ComponentActivity
+import android.widget.DatePicker
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import android.widget.DatePicker
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CalendarToday
+import androidx.navigation.NavController
 import com.itptit.roomrenting.R
-import java.util.*
+import com.itptit.roomrenting.domain.model.FileInfo
+import com.itptit.roomrenting.presentation.common.FullScreenLoadingModal
+import java.util.Calendar
 
 
 @Composable
-fun CreateContractScreen(navController: NavController, roomId: String) {
+fun CreateContractScreen(
+    navController: NavController,
+    roomName: String,
+    roomId: String,
+    viewModel: CreateContractViewModel
+) {
+    var isDialogVisible by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    val result by viewModel.result.collectAsState()
+
+    LaunchedEffect(result) {
+        if (result.isNotEmpty()) {
+            isDialogVisible = true
+        }
+    }
+    FullScreenLoadingModal(isVisible = viewModel.isLoading.collectAsState().value)
     Scaffold(
-        topBar = { CreateContractTopBar(navController) },
-        content = { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp) // Cách nhau giữa các phần tử
-            ) {
-                item {
-                    CreateContractContent()
-                }
-            }
-        },
         modifier = Modifier
             .fillMaxSize()
             .padding(
@@ -114,7 +89,45 @@ fun CreateContractScreen(navController: NavController, roomId: String) {
                     .asPaddingValues()
                     .calculateTopPadding()
             )
+            .clickable(
+                onClick = {
+                    focusManager.clearFocus()
+                },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ),
+        topBar = { CreateContractTopBar(navController, roomName, roomId) },
+        content = { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    CreateContractContent(viewModel, roomId)
+                }
+            }
+        },
     )
+    if (isDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { isDialogVisible = false },
+            title = { Text("Thông báo") },
+            text = { Text(result) },
+            confirmButton = {
+                Button(onClick = {
+                    isDialogVisible = false
+                    if ("thành công" in result) {
+                        navController.popBackStack()
+                    }
+                }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 }
 
 
@@ -161,52 +174,8 @@ fun ContractSectionHeader(title: String, description: String) {
     }
 }
 
-
 @Composable
-fun LabelText(text: String) {
-    Text(
-        text = text,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Medium,
-        color = Color.Black
-    )
-}
-
-
-@Composable
-fun CustomInputField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = {
-            if (placeholder.isNotEmpty()) {
-                Text(text = placeholder, color = Color.Gray)
-            }
-        },
-        singleLine = true,
-        keyboardOptions = keyboardOptions,
-        modifier = modifier
-            .background(Color(0xFFF0F0F0), RoundedCornerShape(8.dp))
-            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp)),
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent, // Hide the focused indicator
-            unfocusedIndicatorColor = Color.Transparent, // Hide the unfocused indicator
-            disabledIndicatorColor = Color.Transparent, // Hide the disabled indicator
-            focusedContainerColor = Color(0xFFEEEEEE), // Set the focused background color
-            unfocusedContainerColor = Color(0xFFEEEEEE), // Set the unfocused background color
-            disabledContainerColor = Color(0xFFEEEEEE) // Set the disabled background color
-        )
-    )
-}
-
-@Composable
-fun CreateContractTopBar(navController: NavController) {
+fun CreateContractTopBar(navController: NavController, roomName: String, roomId: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -246,7 +215,7 @@ fun CreateContractTopBar(navController: NavController) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Phòng 1 - #104160",
+                    text = "Phòng $roomName - #$roomId",
                     color = Color.Gray,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium
@@ -257,97 +226,46 @@ fun CreateContractTopBar(navController: NavController) {
 }
 
 @Composable
-fun InputField(title: String, hint: String, modifier: Modifier = Modifier) {
-    var text by remember { mutableStateOf("") } // Quản lý giá trị nhập
-    var isFocused by remember { mutableStateOf(false) } // Trạng thái focus
-
-    Column(modifier = modifier.padding(horizontal = 16.dp)) {
-        // Hiển thị tiêu đề với dấu sao đỏ (nếu có)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = title.replace("*", ""), // Loại bỏ dấu "*" trong tiêu đề
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            if (title.contains("*")) {
-                Text(
-                    text = "*",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Red // Màu đỏ cho dấu sao
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp)) // Khoảng cách giữa tiêu đề và TextField
-
-        // TextField với nền thay đổi khi focus
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = if (isFocused) Color(0xFFF5F5F5) else Color.White, // Nền xám khi focus
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .border(1.dp, Color.LightGray, shape = RoundedCornerShape(8.dp)) // Viền xám nhạt
-                .height(56.dp) // Chiều cao TextField
-        ) {
-            TextField(
-                value = text,
-                onValueChange = { text = it },
-                placeholder = { Text(text = hint, color = Color.Gray) }, // Placeholder màu xám
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onFocusChanged { isFocused = it.isFocused }, // Cập nhật trạng thái focus
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent, // Xóa màu nền mặc định khi focus
-                    unfocusedContainerColor = Color.Transparent, // Xóa màu nền mặc định khi unfocus
-                    cursorColor = Color.Black, // Màu con trỏ
-                    focusedIndicatorColor = Color.Transparent, // Ẩn viền focus mặc định
-                    unfocusedIndicatorColor = Color.Transparent // Ẩn viền unfocus mặc định
-                )
-            )
-        }
-    }
-}
-
-
-@Composable
 fun FileUploadSection(onFileUploaded: (FileInfo) -> Unit) {
     val context = LocalContext.current
     var errorMessage by remember { mutableStateOf<String?>(null) } // Lưu thông báo lỗi
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            val contentResolver = context.contentResolver
-            val mimeType = contentResolver.getType(uri)
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                val contentResolver = context.contentResolver
+                val mimeType = contentResolver.getType(uri)
 
-            // Các định dạng file được hỗ trợ
-            val supportedTypes = listOf("application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-
-            if (mimeType in supportedTypes) {
-                val cursor = contentResolver.query(uri, null, null, null, null)
-                val fileName = if (cursor != null && cursor.moveToFirst()) {
-                    val nameIndex = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
-                    cursor.getString(nameIndex)
-                } else {
-                    "File không xác định"
-                }
-                cursor?.close()
-
-                // Tạo đối tượng FileInfo
-                val fileInfo = FileInfo(
-                    fileName = fileName,
-                    fileSize = 87.59 // Có thể thay đổi theo kích thước thực tế
+                // Các định dạng file được hỗ trợ
+                val supportedTypes = listOf(
+                    "application/pdf",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 )
-                onFileUploaded(fileInfo)
-                errorMessage = null // Xóa thông báo lỗi khi file hợp lệ
-            } else {
-                errorMessage = "Định dạng file không được hỗ trợ"
+
+                if (mimeType in supportedTypes) {
+                    val cursor = contentResolver.query(uri, null, null, null, null)
+                    val fileName = if (cursor != null && cursor.moveToFirst()) {
+                        val nameIndex = cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME)
+                        cursor.getString(nameIndex)
+                    } else {
+                        "File không xác định"
+                    }
+                    cursor?.close()
+
+                    // Tạo đối tượng FileInfo
+                    val fileInfo = FileInfo(
+                        fileName = fileName,
+                        fileSize = 87.59,
+                        uri = uri
+                    )
+                    onFileUploaded(fileInfo)
+                    errorMessage = null // Xóa thông báo lỗi khi file hợp lệ
+                } else {
+                    errorMessage = "Định dạng file không được hỗ trợ"
+                }
             }
         }
-    }
 
     Column(
         modifier = Modifier
@@ -398,7 +316,7 @@ fun FileUploadSection(onFileUploaded: (FileInfo) -> Unit) {
 
 
 @Composable
-fun CreateContractContent() {
+fun CreateContractContent(viewModel: CreateContractViewModel, roomId: String) {
     var fileInfo by remember { mutableStateOf<FileInfo?>(null) }
     // Declare state variables for input fields
     var contractName by remember { mutableStateOf("") }
@@ -412,6 +330,10 @@ fun CreateContractContent() {
     var initialWaterReading by remember { mutableStateOf("") }
     var internetPrice by remember { mutableStateOf("") }
     var roomPrice by remember { mutableStateOf("") }
+    var generalService by remember { mutableStateOf("") }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier
@@ -479,7 +401,10 @@ fun CreateContractContent() {
 
         Spacer(modifier = Modifier.height(24.dp))
         // Ngày vào ở và ngày kết thúc với Date Pickers
-        DateInputFields()
+        DateInputFields(
+            onChangeStartDate = { startDate = it },
+            onChangeEndDate = { endDate = it }
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -539,20 +464,38 @@ fun CreateContractContent() {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Ngày thanh toán
-        InputField(
-            title = "Ngày thanh toán*",
-            hint = "Nhập ngày thanh toán (1-31)",
-            value = paymentDay,
-            onValueChange = { input ->
-                if (input.all { it.isDigit() } && (input.isEmpty() || (input.toIntOrNull()
-                        ?: 0) in 1..31)
-                ) {
-                    paymentDay = input
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            InputField(
+                title = "Ngày thanh toán*",
+                hint = "Nhập ngày thanh toán (1-31)",
+                value = paymentDay,
+                onValueChange = { input ->
+                    if (input.all { it.isDigit() } && (input.isEmpty() || (input.toIntOrNull()
+                            ?: 0) in 1..31)
+                    ) {
+                        paymentDay = input
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+            InputField(
+                title = "Dịch vụ chung*",
+                hint = "",
+                value = generalService,
+                onValueChange = { input ->
+                    if (input.all { it.isDigit() }) {
+                        generalService = input
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.weight(1f)
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
 
         // Giá tiền điện* và Giá tiền nước*
@@ -657,7 +600,25 @@ fun CreateContractContent() {
 
         // Nút thêm hợp đồng
         Button(
-            onClick = { /* Xử lý khi bấm thêm hợp đồng */ },
+            onClick = {
+                viewModel.createRentedRoom(
+                    roomId = roomId,
+                    tenantName = customerName,
+                    tenantPhone = customerPhone,
+                    numberOfTenants = totalMembers.toInt(),
+                    startDate = startDate,
+                    endDate = endDate,
+                    paymentDay = paymentDay.toInt(),
+                    contractUrl = fileInfo,
+                    price = roomPrice.toInt(),
+                    electricityPrice = electricityPrice.toInt(),
+                    waterPrice = waterPrice.toInt(),
+                    internetPrice = internetPrice.toInt(),
+                    generalPrice = generalService.toInt(),
+                    initElectricityNum = initialElectricityReading.toInt(),
+                    initWaterNum = initialWaterReading.toInt(),
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
@@ -747,7 +708,7 @@ fun InputField(
 }
 
 @Composable
-fun DateInputFields() {
+fun DateInputFields(onChangeStartDate: (String) -> Unit, onChangeEndDate: (String) -> Unit) {
     val context = LocalContext.current
 
     var startDate by remember { mutableStateOf("") }
@@ -758,7 +719,7 @@ fun DateInputFields() {
         android.app.DatePickerDialog(
             context,
             { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                val selectedDate = "%02d/%02d/%04d".format(dayOfMonth, month + 1, year)
+                val selectedDate = "%04d-%02d-%02d".format(year, month + 1, dayOfMonth)
                 onDateSelected(selectedDate)
             },
             initialDate.get(Calendar.YEAR),
@@ -774,13 +735,27 @@ fun DateInputFields() {
         DateInputField(
             title = "Ngày vào ở*",
             date = startDate,
-            onDateClick = { /* ... */ },
+            onDateClick = {
+                showDatePicker(
+                    Calendar.getInstance(),
+                    onDateSelected = {
+                        startDate = it
+                        onChangeStartDate(it)
+                    })
+            },
             modifier = Modifier.weight(1f)
         )
         DateInputField(
             title = "Ngày kết thúc*",
             date = endDate,
-            onDateClick = { /* ... */ },
+            onDateClick = {
+                showDatePicker(
+                    Calendar.getInstance(),
+                    onDateSelected = {
+                        endDate = it
+                        onChangeEndDate(it)
+                    })
+            },
             modifier = Modifier.weight(1f)
         )
     }
@@ -850,10 +825,3 @@ fun DateInputField(
         }
     }
 }
-
-
-data class FileInfo(
-    val fileName: String,
-    val fileSize: Double
-)
-
